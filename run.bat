@@ -1,5 +1,6 @@
 @echo off
 echo Running application...
+pushd build
 ox3d.exe
 popd
 echo Exiting application...
