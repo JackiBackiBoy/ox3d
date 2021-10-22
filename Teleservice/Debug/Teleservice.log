@@ -1,5 +1,0 @@
-﻿  Window.cpp
-  Main.cpp
-  Generating Code...
-C:\Code\Teleservice\Teleservice\src\core\Window.cpp(128): warning C4715: 'Window::WndProc': not all control paths return a value
-  Teleservice.vcxproj -> C:\Code\Teleservice\Debug\Teleservice.exe

@@ -1,6 +1,0 @@
-﻿  RenderingWindow.cpp
-C:\Development\Teleservice\Teleservice\src\rendering\WindowStyle.h(22,34): warning C4369: 'WindowStyle::Popup':  enumerator value '2147483648' cannot be represented as 'int', value is '-2147483648'
-C:\Development\Teleservice\Teleservice\src\core\Window.h(41,37): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-C:\Development\Teleservice\Teleservice\src\windows\RenderingWindow.cpp(98,47): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Development\Teleservice\Teleservice\src\windows\RenderingWindow.cpp(153): warning C4715: 'RenderingWindow::WindowProcedure': not all control paths return a value
-  Teleservice.vcxproj -> C:\Development\Teleservice\x64\Debug\Teleservice.exe
