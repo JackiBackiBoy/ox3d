@@ -1,17 +1,15 @@
-#include "Windows.h"
-#include "window.h"
+#include <iostream>
 
-INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                   PSTR lpCmdLine, INT nCmdShow)
-{
-  Window window = Window(L"ox3d", 1080, 720, hInstance);
-  
-  MSG messages;
-  while (GetMessageW(&messages, NULL, 0, 0) > 0)
-  {
-      TranslateMessage(&messages);
-      DispatchMessage(&messages);
-  }
-  
+#include "core/window.h"
+
+int main() {
+  // Create window
+  Window* window = new Window(500, 500);
+  window->run();
+
+  // Delete window
+  window = nullptr;
+  delete window;
+
   return 0;
 }

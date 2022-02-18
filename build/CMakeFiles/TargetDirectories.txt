@@ -1,0 +1,3 @@
+/Users/jackhenrikson/code/C++/ox3d/build/CMakeFiles/ox3d.dir
+/Users/jackhenrikson/code/C++/ox3d/build/CMakeFiles/edit_cache.dir
+/Users/jackhenrikson/code/C++/ox3d/build/CMakeFiles/rebuild_cache.dir
