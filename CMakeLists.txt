@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.20.0)
 
 # project name
 project(ox3d)
@@ -6,7 +6,50 @@ project(ox3d)
 include_directories(${PROJECT_SOURCE_DIR})
 
 # c++ language version
-set(CMAKE_CXX_FLAGS "-std=c++11") # c++11
+#set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(GLFW_PATH C:/Code/C++/ox3d/dependencies/GLFW)
+set(VULKAN_SDK_PATH C:/VulkanSDK/1.3.204.0)
+
+# 1. Set VULKAN_SDK_PATH in .env.cmake to target specific vulkan version
+if (DEFINED VULKAN_SDK_PATH)
+  set(Vulkan_INCLUDE_DIRS "${VULKAN_SDK_PATH}/Include") # 1.1 Make sure this include path is correct
+  set(Vulkan_LIBRARIES "${VULKAN_SDK_PATH}/Lib") # 1.2 Make sure lib path is correct
+  set(Vulkan_FOUND "True")
+else()
+  find_package(Vulkan REQUIRED) # throws error if could not find Vulkan
+  message(STATUS "Found Vulkan: $ENV{VULKAN_SDK}")
+endif()
+if (NOT Vulkan_FOUND)
+	message(FATAL_ERROR "Could not find Vulkan library!")
+else()
+	message(STATUS "Using vulkan lib at: ${Vulkan_LIBRARIES}")
+endif()
+
+# 2. Set GLFW_PATH in .env.cmake to target specific glfw
+if (DEFINED GLFW_PATH)
+  message(STATUS "Using GLFW path specified in .env")
+  set(GLFW_INCLUDE_DIRS "${GLFW_PATH}/include")
+  if (MSVC)
+    set(GLFW_LIB "${GLFW_PATH}/lib-vc2019") # 2.1 Update lib-vc2019 to use same version as your visual studio
+    #elseif (CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
+  else()
+    message(STATUS "USING MINGW")
+    set(GLFW_LIB "${GLFW_PATH}/lib-mingw-w64") # 2.1 make sure matches glfw mingw subdirectory
+  endif()
+else()
+  find_package(glfw3 3.3 REQUIRED)
+  set(GLFW_LIB glfw)
+  message(STATUS "Found GLFW")
+endif()
+if (NOT GLFW_LIB)
+  message(STATUS "Could not find glfw library!")
+else()
+	message(STATUS "Using glfw lib at: ${GLFW_LIB}")
+endif()
+
+
+#include_directories(GLFW_INCLUDE_DIRS/)
+#link_directories(GLFW_INCLUDEDIRS/)
 
 # According to CMAKE documentation this
 # operation is not advised, however
@@ -17,13 +60,39 @@ set(CMAKE_CXX_FLAGS "-std=c++11") # c++11
 # files in the project, however this
 # is not needed for the time being.
 
-# Add .lib files
-link_directories(${CMAKE_SOURCE_DIR}/lib)
-
 # Retrieve all source files
-file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "src/*.c" "src/*.cpp")
+find_package(OpenGL REQUIRED)
+file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 # Retrieve all heade files
-file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "src/*.h" "src/*.hpp")
+#file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "*.h" "*.hpp")
 
 add_executable(ox3d ${SOURCE_FILES} ${HEADER_FILES})
+target_link_libraries(${PROJECT_NAME} OpenGL::GL glfw3 vulkan-1)
+
+# Standard c++ version
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+
+if (WIN32)
+  message(STATUS "CREATING BUILD FOR WINDOWS")
+
+  if (USE_MINGW)
+    target_include_directories(${PROJECT_NAME} PUBLIC
+      ${MINGW_PATH}/include
+    )
+    target_link_directories(${PROJECT_NAME} PUBLIC
+      ${MINGW_PATH}/lib
+    )
+  endif()
+
+  target_include_directories(${PROJECT_NAME} PUBLIC
+    ${PROJECT_SOURCE_DIR}/src
+    ${Vulkan_INCLUDE_DIRS}
+    ${GLFW_INCLUDE_DIRS}
+  )
+
+  target_link_directories(${PROJECT_NAME} PUBLIC
+    ${Vulkan_LIBRARIES}
+    ${GLFW_LIB}
+  )
+endif()

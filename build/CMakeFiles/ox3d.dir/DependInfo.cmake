@@ -8,8 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/jackhenrikson/code/C++/ox3d/src/core/window.cpp" "CMakeFiles/ox3d.dir/src/core/window.cpp.o" "gcc" "CMakeFiles/ox3d.dir/src/core/window.cpp.o.d"
-  "/Users/jackhenrikson/code/C++/ox3d/src/main.cpp" "CMakeFiles/ox3d.dir/src/main.cpp.o" "gcc" "CMakeFiles/ox3d.dir/src/main.cpp.o.d"
+  "C:/Code/C++/ox3d/src/core/window.cpp" "CMakeFiles/ox3d.dir/src/core/window.cpp.obj" "gcc" "CMakeFiles/ox3d.dir/src/core/window.cpp.obj.d"
+  "C:/Code/C++/ox3d/src/main.cpp" "CMakeFiles/ox3d.dir/src/main.cpp.obj" "gcc" "CMakeFiles/ox3d.dir/src/main.cpp.obj.d"
   )
 
 # Targets to which this target links.

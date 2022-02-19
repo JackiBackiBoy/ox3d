@@ -1,9 +1,11 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/ox3d.dir/src/core/window.cpp.o"
-  "CMakeFiles/ox3d.dir/src/core/window.cpp.o.d"
-  "CMakeFiles/ox3d.dir/src/main.cpp.o"
-  "CMakeFiles/ox3d.dir/src/main.cpp.o.d"
-  "ox3d"
+  "CMakeFiles/ox3d.dir/src/core/window.cpp.obj"
+  "CMakeFiles/ox3d.dir/src/core/window.cpp.obj.d"
+  "CMakeFiles/ox3d.dir/src/main.cpp.obj"
+  "CMakeFiles/ox3d.dir/src/main.cpp.obj.d"
+  "libox3d.dll.a"
+  "ox3d.exe"
+  "ox3d.exe.manifest"
   "ox3d.pdb"
 )
 
