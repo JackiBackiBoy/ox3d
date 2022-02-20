@@ -1,13 +1,15 @@
 #include "window.h"
 #include <iostream>
 #include <vector>
+#include "graphicsManager.h"
 
 void Window::createWindow() {
   glfwInit(); // initialize glfw
 
   // set GLFW options
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-  rawWindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
+  glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+  m_RawWindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
   
   // Supported extensions
   uint32_t extensionCount = 0;
@@ -17,6 +19,7 @@ void Window::createWindow() {
   std::vector<VkExtensionProperties> extensions(extensionCount);
   vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
+  // List all supported extensions
   std::cout << "Extensions supported: " << extensionCount << "\n";
   for (auto& extension : extensions) {
     std::cout << "\t" << extension.extensionName << "\n";
@@ -27,11 +30,11 @@ void Window::run() {
   createWindow();
 
   // Rendering loop
-  while (!glfwWindowShouldClose(rawWindow)) {
+  while (!glfwWindowShouldClose(m_RawWindow)) {
     glfwPollEvents();
   }
 
   // onExit
-  glfwDestroyWindow(rawWindow);
+  glfwDestroyWindow(m_RawWindow);
   glfwTerminate();
 }

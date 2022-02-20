@@ -2,6 +2,8 @@
 #define WINDOW_HEADER
 #define GLFW_INCLUDE_VULKAN
 
+class GraphicsManager;
+
 #include <stdint.h>
 #include <string>
 #include <GLFW/glfw3.h>
@@ -13,12 +15,15 @@ class Window {
 
     void run();
 
+    inline std::string getTitle() { return m_Title; }
+
   private:
     void createWindow();
 
     uint32_t m_Width;
     uint32_t m_Height;
     std::string m_Title;
-    GLFWwindow* rawWindow;
+    GLFWwindow* m_RawWindow;
+    GraphicsManager* m_GraphicsManager;
 };
 #endif

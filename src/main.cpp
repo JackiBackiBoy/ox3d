@@ -13,7 +13,6 @@ int main() {
   window = nullptr;
   delete window;
 
-  std::cout << "Warming up Vulkan graphics engine..." << std::endl;
   std::vector<int> extensions(5);
   glfwInit();
 
