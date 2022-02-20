@@ -2,6 +2,7 @@
 
 #include "core/window.h"
 #include "GLFW/glfw3.h"
+#include <vector>
 
 int main() {
   //Create window
@@ -13,7 +14,7 @@ int main() {
   delete window;
 
   std::cout << "Warming up Vulkan graphics engine..." << std::endl;
-  
+  std::vector<int> extensions(5);
   glfwInit();
 
   return 0;

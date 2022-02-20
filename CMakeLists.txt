@@ -9,6 +9,10 @@ include_directories(${PROJECT_SOURCE_DIR})
 #set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(GLFW_PATH C:/Code/C++/ox3d/dependencies/GLFW)
 set(VULKAN_SDK_PATH C:/VulkanSDK/1.3.204.0)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+
+# Enable static linking
+set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++")
 
 # 1. Set VULKAN_SDK_PATH in .env.cmake to target specific vulkan version
 if (DEFINED VULKAN_SDK_PATH)
@@ -61,14 +65,10 @@ endif()
 # is not needed for the time being.
 
 # Retrieve all source files
-find_package(OpenGL REQUIRED)
 file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
-# Retrieve all heade files
-#file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "*.h" "*.hpp")
-
 add_executable(ox3d ${SOURCE_FILES} ${HEADER_FILES})
-target_link_libraries(${PROJECT_NAME} OpenGL::GL glfw3 vulkan-1)
+target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1)
 
 # Standard c++ version
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
@@ -76,14 +76,10 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 if (WIN32)
   message(STATUS "CREATING BUILD FOR WINDOWS")
 
-  if (USE_MINGW)
-    target_include_directories(${PROJECT_NAME} PUBLIC
-      ${MINGW_PATH}/include
-    )
-    target_link_directories(${PROJECT_NAME} PUBLIC
-      ${MINGW_PATH}/lib
-    )
-  endif()
+  set(MINGW_PATH C:/Program Files/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64)
+  message(STATUS "MinGW path:" ${MINGW_PATH})
+  target_include_directories(${PROJECT_NAME} PUBLIC ${MINGW_PATH}/include)
+  target_link_directories(${PROJECT_NAME} PUBLIC ${MINGW_PATH}/lib)
 
   target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/src
