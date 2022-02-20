@@ -10,8 +10,8 @@ class GraphicsManager;
 
 class Window {
   public:
-    Window(const uint32_t& width, const uint32_t& height, const std::string& title)
-      : m_Width(width), m_Height(height), m_Title(title) {}
+    Window(const uint32_t& width, const uint32_t& height, const std::string& title);
+    ~Window();
 
     void run();
 

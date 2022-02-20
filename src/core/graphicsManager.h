@@ -2,6 +2,7 @@
 #define GRAPHICS_MANAGER_HEADER
 
 #include "vulkan/vulkan.h"
+#include <GLFW/glfw3.h>
 #include "window.h"
 
 class GraphicsManager {
@@ -9,6 +10,7 @@ class GraphicsManager {
     GraphicsManager() {};
 
     void loadVulkan();
+    void destroyVulkan();
 
   private:
     Window* m_Window;

@@ -3,6 +3,15 @@
 #include <vector>
 #include "graphicsManager.h"
 
+Window::Window(const uint32_t& width, const uint32_t& height, const std::string& title)
+  : m_Width(width), m_Height(height), m_Title(title) {
+    m_GraphicsManager = new GraphicsManager();
+}
+
+Window::~Window() {
+  delete m_GraphicsManager;
+}
+
 void Window::createWindow() {
   glfwInit(); // initialize glfw
 
@@ -12,22 +21,11 @@ void Window::createWindow() {
   m_RawWindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
   
   // Supported extensions
-  uint32_t extensionCount = 0;
-  vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
-  // Store all extensions in extensions vector
-  std::vector<VkExtensionProperties> extensions(extensionCount);
-  vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
-
-  // List all supported extensions
-  std::cout << "Extensions supported: " << extensionCount << "\n";
-  for (auto& extension : extensions) {
-    std::cout << "\t" << extension.extensionName << "\n";
-  }
 }
 
 void Window::run() {
   createWindow();
+  m_GraphicsManager->loadVulkan();
 
   // Rendering loop
   while (!glfwWindowShouldClose(m_RawWindow)) {
@@ -35,6 +33,7 @@ void Window::run() {
   }
 
   // onExit
+  m_GraphicsManager->destroyVulkan();
   glfwDestroyWindow(m_RawWindow);
   glfwTerminate();
 }
