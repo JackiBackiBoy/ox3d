@@ -7,8 +7,7 @@
 #include <algorithm>
 #include <set>
 
-GraphicsManager::GraphicsManager(Window* window)
-{
+GraphicsManager::GraphicsManager(Window* window) {
   m_Window = window;
 }
 
