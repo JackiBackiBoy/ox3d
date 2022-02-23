@@ -13,6 +13,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 # Enable static linking
 set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++")
+set(CMAKE_CXX_STANDARD 17)
 
 # 1. Set VULKAN_SDK_PATH in .env.cmake to target specific vulkan version
 if (DEFINED VULKAN_SDK_PATH)
@@ -66,6 +67,9 @@ endif()
 
 # Retrieve all source files
 file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
+
+# Retrieve all header files
+file(GLOB_RECURSE HEADER_FILES ${PROJECT_SOURCE_DIR}/src/*.h)
 
 add_executable(ox3d ${SOURCE_FILES} ${HEADER_FILES})
 target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1)

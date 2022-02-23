@@ -5,11 +5,8 @@
 
 Window::Window(const uint32_t& width, const uint32_t& height, const std::string& title)
   : m_Width(width), m_Height(height), m_Title(title) {
-    m_GraphicsManager = new GraphicsManager();
-}
-
-Window::~Window() {
-  delete m_GraphicsManager;
+    createWindow();
+    m_GraphicsManager = new GraphicsManager(this);
 }
 
 void Window::createWindow() {
@@ -19,12 +16,9 @@ void Window::createWindow() {
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
   glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
   m_RawWindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
-  
-  // Supported extensions
 }
 
 void Window::run() {
-  createWindow();
   m_GraphicsManager->loadVulkan();
 
   // Rendering loop

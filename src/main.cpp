@@ -7,7 +7,14 @@
 int main() {
   //Create window
   Window* window = new Window(500, 500, "ox3d");
-  window->run();
+
+  try {
+    window->run();
+  }
+  catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // Delete window
   window = nullptr;
