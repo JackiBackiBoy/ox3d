@@ -1,0 +1,3 @@
+﻿  graphicsManager.cpp
+LINK : warning LNK4044: unrecognized option '/static-libstdc++'; ignored
+  ox3d.vcxproj -> C:\Code\C++\ox3d\vsbuild\Debug\ox3d.exe

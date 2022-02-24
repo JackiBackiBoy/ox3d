@@ -20,7 +20,7 @@ const std::vector<const char*> deviceExtensions = {
   const bool enableValidationLayers = true;
 #endif
 
-// Queue Family Indices class
+// Queue Family Indices struct
 struct QueueFamilyIndices {
   std::optional<uint32_t> graphicsFamily;
   std::optional<uint32_t> presentFamily;
@@ -41,9 +41,9 @@ class GraphicsManager {
 
     void loadVulkan();
     void destroyVulkan();
+    void addShader(Shader* shader);
 
   private:
-
     bool checkValidationLayerSupport();
     void createVkInstance();
     void setupDebugMessenger();
@@ -69,6 +69,10 @@ class GraphicsManager {
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
     void createSwapChain();
+    void createImageViews();
+    void createRenderPass();
+    void createGraphicsPipeline();
+    VkShaderModule createShaderModule(const std::vector<char>& code);
 
     Window* m_Window;
     VkInstance m_Instance;
@@ -79,5 +83,13 @@ class GraphicsManager {
     VkSurfaceKHR m_Surface;
     VkQueue m_PresentQueue;
     VkSwapchainKHR m_SwapChain;
+    std::vector<VkImage> m_SwapChainImages;
+    VkFormat m_SwapChainImageFormat;
+    VkExtent2D m_SwapChainExtent;
+    std::vector<VkImageView> m_SwapChainImageViews;
+    std::vector<Shader*> m_Shaders;
+    VkRenderPass m_RenderPass;
+    VkPipelineLayout m_PipelineLayout;
+    VkPipeline m_GraphicsPipeline;
 };
 #endif

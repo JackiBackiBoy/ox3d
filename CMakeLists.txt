@@ -6,14 +6,13 @@ project(ox3d)
 include_directories(${PROJECT_SOURCE_DIR})
 
 # c++ language version
-#set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(GLFW_PATH C:/Code/C++/ox3d/dependencies/GLFW)
 set(VULKAN_SDK_PATH C:/VulkanSDK/1.3.204.0)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
-# Enable static linking
-set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++")
+set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++") # enable static linking
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # 1. Set VULKAN_SDK_PATH in .env.cmake to target specific vulkan version
 if (DEFINED VULKAN_SDK_PATH)
@@ -51,7 +50,6 @@ if (NOT GLFW_LIB)
 else()
 	message(STATUS "Using glfw lib at: ${GLFW_LIB}")
 endif()
-
 
 #include_directories(GLFW_INCLUDE_DIRS/)
 #link_directories(GLFW_INCLUDEDIRS/)

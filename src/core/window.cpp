@@ -18,8 +18,26 @@ void Window::createWindow() {
   m_RawWindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
 }
 
+void Window::onStart() {
+  m_Shader.loadVertexShader("assets/shaders/lightingShaderVert.spv");
+  m_Shader.loadFragmentShader("assets/shaders/lightingShaderFrag.spv");
+
+  m_GraphicsManager->addShader(&m_Shader);
+}
+
+void Window::onUpdate() {
+
+}
+
+void Window::onRender() {
+
+}
+
 void Window::run() {
+  onStart();
+
   m_GraphicsManager->loadVulkan();
+
 
   // Rendering loop
   while (!glfwWindowShouldClose(m_RawWindow)) {
@@ -31,3 +49,4 @@ void Window::run() {
   glfwDestroyWindow(m_RawWindow);
   glfwTerminate();
 }
+

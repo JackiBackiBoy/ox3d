@@ -1,0 +1,3 @@
+C:/Code/C++/ox3d/vsbuild/CMakeFiles/ox3d.dir
+C:/Code/C++/ox3d/vsbuild/CMakeFiles/ALL_BUILD.dir
+C:/Code/C++/ox3d/vsbuild/CMakeFiles/ZERO_CHECK.dir
