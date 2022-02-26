@@ -42,6 +42,7 @@ void Window::run() {
   // Rendering loop
   while (!glfwWindowShouldClose(m_RawWindow)) {
     glfwPollEvents();
+    m_GraphicsManager->renderFrame();
   }
 
   // onExit

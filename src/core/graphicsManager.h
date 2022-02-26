@@ -42,6 +42,7 @@ class GraphicsManager {
     void loadVulkan();
     void destroyVulkan();
     void addShader(Shader* shader);
+    void renderFrame();
 
   private:
     bool checkValidationLayerSupport();
@@ -73,6 +74,11 @@ class GraphicsManager {
     void createRenderPass();
     void createGraphicsPipeline();
     VkShaderModule createShaderModule(const std::vector<char>& code);
+    void createFramebuffers();
+    void createCommandPool();
+    void createCommandBuffers();
+    void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+    void createSyncObjects();
 
     Window* m_Window;
     VkInstance m_Instance;
@@ -91,5 +97,11 @@ class GraphicsManager {
     VkRenderPass m_RenderPass;
     VkPipelineLayout m_PipelineLayout;
     VkPipeline m_GraphicsPipeline;
+    std::vector<VkFramebuffer> m_SwapChainFramebuffers;
+    VkCommandPool m_CommandPool;
+    VkCommandBuffer m_CommandBuffer;
+    VkSemaphore m_ImageAvailableSemaphore;
+    VkSemaphore m_RenderFinishedSemaphore;
+    VkFence m_InFlightFence;
 };
 #endif
