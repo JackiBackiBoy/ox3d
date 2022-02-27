@@ -11,6 +11,7 @@ if (WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++") # enable static linking
   set(GLFW_PATH ${PROJECT_SOURCE_DIR}/dependencies/GLFW/windows)
   set(VULKAN_SDK_PATH C:/VulkanSDK/1.3.204.0)
+  set(GLM_PATH ${PROJECT_SOURCE_DIR}/dependencies/GLM)
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
@@ -26,9 +27,9 @@ else()
   message(STATUS "Found Vulkan: $ENV{VULKAN_SDK}")
 endif()
 if (NOT Vulkan_FOUND)
-	message(FATAL_ERROR "Could not find Vulkan library!")
+  message(FATAL_ERROR "Could not find Vulkan library!")
 else()
-	message(STATUS "Using vulkan lib at: ${Vulkan_LIBRARIES}")
+  message(STATUS "Using vulkan lib at: ${Vulkan_LIBRARIES}")
 endif()
 
 # 2. Set GLFW_LIB
@@ -44,7 +45,7 @@ endif()
 if (NOT GLFW_LIB)
   message(STATUS "Could not find glfw library!")
 else()
-	message(STATUS "Using GLFW lib at: ${GLFW_LIB}")
+  message(STATUS "Using GLFW lib at: ${GLFW_LIB}")
 endif()
 
 # Retrieve all source files
@@ -63,6 +64,7 @@ if (WIN32)
     ${PROJECT_SOURCE_DIR}/src
     ${Vulkan_INCLUDE_DIRS}
     ${GLFW_INCLUDE_DIRS}
+    ${GLM_PATH}/include
   )
 
   target_link_directories(${PROJECT_NAME} PUBLIC
