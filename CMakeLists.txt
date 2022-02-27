@@ -47,18 +47,6 @@ else()
 	message(STATUS "Using GLFW lib at: ${GLFW_LIB}")
 endif()
 
-#include_directories(GLFW_INCLUDE_DIRS/)
-#link_directories(GLFW_INCLUDEDIRS/)
-
-# According to CMAKE documentation this
-# operation is not advised, however
-# the pros of Globbing significantly
-# outweigh the cons of Globbing. 
-# The recommended approach by CMAKE
-# is to generate a list of all source
-# files in the project, however this
-# is not needed for the time being.
-
 # Retrieve all source files
 file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
@@ -94,3 +82,36 @@ elseif (APPLE)
 
   target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES})
 endif()
+
+# ------ Compiling shader files to SPIRV format ------
+find_program(GLSL_VALIDATOR glslangValidator HINTS 
+  ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE} 
+  /usr/bin 
+  /usr/local/bin 
+  ${VULKAN_SDK_PATH}/Bin
+  ${VULKAN_SDK_PATH}/Bin32
+  $ENV{VULKAN_SDK}/Bin/ 
+  $ENV{VULKAN_SDK}/Bin32/
+)
+
+# Retrieve all vertex and fragment shaders
+file (GLOB_RECURSE GLSL_SOURCE_FILES
+  "${PROJECT_SOURCE_DIR}/shaders/*.vert"
+  "${PROJECT_SOURCE_DIR}/shaders/*.frag"
+)
+
+foreach(GLSL ${GLSL_SOURCE_FILES})
+  get_filename_component(FILE_NAME ${GLSL} NAME)
+  set(SPIRV "${PROJECT_SOURCE_DIR}/shaders/${FILE_NAME}.spv")
+  add_custom_command(
+    OUTPUT ${SPIRV}
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/shaders/"
+    COMMAND ${GLSL_VALIDATOR} -V ${GLSL} -o ${SPIRV}
+    DEPENDS ${GLSL})
+  list(APPEND SPIRV_BINARY_FILES ${SPIRV})
+endforeach(GLSL)
+
+add_custom_target(
+  Shaders
+  DEPENDS ${SPIRV_BINARY_FILES}
+)

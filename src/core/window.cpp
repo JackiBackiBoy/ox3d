@@ -14,8 +14,10 @@ void Window::createWindow() {
 
   // set GLFW options
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-  glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
   m_RawWindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
+  glfwSetWindowUserPointer(m_RawWindow, &m_GraphicsManager);
+  glfwSetFramebufferSizeCallback(m_RawWindow, m_GraphicsManager->onResize);
 }
 
 void Window::onStart() {

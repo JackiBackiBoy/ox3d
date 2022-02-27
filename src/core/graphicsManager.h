@@ -43,6 +43,7 @@ class GraphicsManager {
     void destroyVulkan();
     void addShader(Shader* shader);
     void renderFrame();
+    static void onResize(GLFWwindow* window, int width, int height);
 
   private:
     bool checkValidationLayerSupport();
@@ -79,6 +80,8 @@ class GraphicsManager {
     void createCommandBuffers();
     void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
     void createSyncObjects();
+    void recreateSwapChain();
+    void cleanupSwapChain();
 
     Window* m_Window;
     VkInstance m_Instance;
@@ -99,9 +102,13 @@ class GraphicsManager {
     VkPipeline m_GraphicsPipeline;
     std::vector<VkFramebuffer> m_SwapChainFramebuffers;
     VkCommandPool m_CommandPool;
-    VkCommandBuffer m_CommandBuffer;
-    VkSemaphore m_ImageAvailableSemaphore;
-    VkSemaphore m_RenderFinishedSemaphore;
-    VkFence m_InFlightFence;
+    std::vector<VkCommandBuffer> m_CommandBuffers;
+    std::vector<VkSemaphore> m_ImageAvailableSemaphores;
+    std::vector<VkSemaphore> m_RenderFinishedSemaphores;
+    std::vector<VkFence> m_InFlightFences;
+    bool m_FramebufferResized = false;
+    uint32_t m_CurrentFrame = 0;
+
+    static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 };
 #endif
