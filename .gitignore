@@ -1,3 +1,6 @@
 # CMake
 **/.cache
 build
+
+# macOS
+.DS_Store
