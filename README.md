@@ -1,3 +1,12 @@
+<p align="center">
+<img width=20% height=20% src="https://user-images.githubusercontent.com/44316688/155890017-8769276f-69d2-48c6-847e-994c2533e118.png">
+</p>
+<h1 align="center">Ox3d</h1>
+
+<p align="center">
+Graphics engine powered by Vulkan® and C++.
+</p>
+  
 # ox3d (currently under full reconstruction) 🚧
 As of February 18 2022 the project is making a full transition to Vulkan and Metal graphics APIs. In order to guarantee a solid structure the "deprecated" branch will act as the preliminary version of the graphics (currently written in OpenGL and only available for Windows). The aim is to allow the graphics engine to run optimally on all three major platforms i.e. Linux, macOS and Windows.
 
