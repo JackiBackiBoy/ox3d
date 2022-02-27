@@ -4,7 +4,7 @@
 <h1 align="center">Ox3d</h1>
 
 <p align="center">
-Graphics engine powered by Vulkan and C++.
+Graphics engine powered by Vulkan® and C++.
 </p>
   
 # ox3d (currently under full reconstruction) 🚧
