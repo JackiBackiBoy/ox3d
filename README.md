@@ -1,5 +1,5 @@
 <p align="center">
-<img width=20% height=20% src="https://user-images.githubusercontent.com/44316688/155866182-341b8420-6036-42f4-914b-7b8484c94ba1.png">
+<img width=20% height=20% src="https://user-images.githubusercontent.com/44316688/155890017-8769276f-69d2-48c6-847e-994c2533e118.png">
 </p>
 <h1 align="center">Ox3d</h1>
 
