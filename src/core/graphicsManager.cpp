@@ -21,6 +21,7 @@ void GraphicsManager::loadVulkan() {
   createGraphicsPipeline();
   createFramebuffers();
   createCommandPool();
+  createVertexBuffer();
   createCommandBuffers();
   createSyncObjects();
 }
@@ -28,6 +29,11 @@ void GraphicsManager::loadVulkan() {
 void GraphicsManager::destroyVulkan() {
   vkDeviceWaitIdle(m_LogicalDevice);
 
+  // Destroy vertex buffer and free buffer memory
+  vkDestroyBuffer(m_LogicalDevice, m_VertexBuffer, nullptr);
+  vkFreeMemory(m_LogicalDevice, m_VertexBufferMemory, nullptr);
+
+  // Destroy swap chain
   cleanupSwapChain();
 
   // Destroy semaphores and fences
@@ -639,12 +645,15 @@ void GraphicsManager::createGraphicsPipeline() {
     VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
     // Vertex input
+    auto bindingDescription = Vertex::getBindingDescription();
+    auto attributeDescriptions = Vertex::getAttributeDescriptions();
+
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputInfo.vertexBindingDescriptionCount = 0;
-    vertexInputInfo.pVertexBindingDescriptions = nullptr; // optional
-    vertexInputInfo.vertexAttributeDescriptionCount = 0;
-    vertexInputInfo.pVertexAttributeDescriptions = nullptr; // optional
+    vertexInputInfo.vertexBindingDescriptionCount = 1;
+    vertexInputInfo.pVertexBindingDescriptions = &bindingDescription; // optional
+    vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+    vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data(); // optional
 
     // Input assembly
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo{};
@@ -845,7 +854,12 @@ void GraphicsManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_
 
   // Drawing commands
   vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
-  vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+
+  VkBuffer vertexBuffers[] = { m_VertexBuffer };
+  VkDeviceSize offsets[] = { 0 };
+  vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+
+  vkCmdDraw(commandBuffer, static_cast<uint32_t>(m_Vertices.size()), 1, 0, 0);
   vkCmdEndRenderPass(commandBuffer);
 
   if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
@@ -921,4 +935,51 @@ void GraphicsManager::onResize(GLFWwindow* window, int width, int height) {
   // TODO: Evaluate the possibilities of window user pointers
   auto app = reinterpret_cast<GraphicsManager*>(glfwGetWindowUserPointer(window));
   app->m_FramebufferResized = true;
+}
+
+void GraphicsManager::createVertexBuffer() {
+  VkBufferCreateInfo bufferInfo{};
+  bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+  bufferInfo.size = sizeof(m_Vertices[0]) * m_Vertices.size();
+  bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+  bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+  if (vkCreateBuffer(m_LogicalDevice, &bufferInfo, nullptr, &m_VertexBuffer) != VK_SUCCESS) {
+    throw std::runtime_error("VULKAN ERROR: Failed to create vertex buffer!");
+  }
+
+  VkMemoryRequirements memRequirements;
+  vkGetBufferMemoryRequirements(m_LogicalDevice, m_VertexBuffer, &memRequirements);
+
+  VkMemoryAllocateInfo allocInfo{};
+  allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+  allocInfo.allocationSize = memRequirements.size;
+  allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits,
+                                             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                             VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+  if (vkAllocateMemory(m_LogicalDevice, &allocInfo, nullptr, &m_VertexBufferMemory) != VK_SUCCESS) {
+    throw std::runtime_error("VULKAN ERROR: Failed to allocate vertex buffer memory!");
+  }
+
+  vkBindBufferMemory(m_LogicalDevice, m_VertexBuffer, m_VertexBufferMemory, 0);
+
+  void* data;
+  vkMapMemory(m_LogicalDevice, m_VertexBufferMemory, 0, bufferInfo.size, 0, &data);
+  memcpy(data, m_Vertices.data(), (size_t)bufferInfo.size);
+  vkUnmapMemory(m_LogicalDevice, m_VertexBufferMemory);
+}
+
+uint32_t GraphicsManager::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+  VkPhysicalDeviceMemoryProperties memProperties;
+  vkGetPhysicalDeviceMemoryProperties(m_PhysicalDevice, &memProperties);
+
+  for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+    if (typeFilter & (1 << i) &&
+        (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+      return i;
+    }
+  }
+
+  throw std::runtime_error("VULKAN ERROR: Failed to find suitable memory type!");
 }

@@ -4,6 +4,7 @@
 #include "window.h"
 #include <vector>
 #include <optional>
+#include "rendering/vertex.h"
 
 const std::vector<const char*> validationLayers = {
   "VK_LAYER_KHRONOS_validation"
@@ -82,6 +83,8 @@ class GraphicsManager {
     void createSyncObjects();
     void recreateSwapChain();
     void cleanupSwapChain();
+    void createVertexBuffer();
+    uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
     Window* m_Window;
     VkInstance m_Instance;
@@ -108,6 +111,14 @@ class GraphicsManager {
     std::vector<VkFence> m_InFlightFences;
     bool m_FramebufferResized = false;
     uint32_t m_CurrentFrame = 0;
+    VkBuffer m_VertexBuffer;
+    VkDeviceMemory m_VertexBufferMemory;
+
+    const std::vector<Vertex> m_Vertices = {
+      {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+      {{0.5f, 0.5f}, {0.5f, 1.0f, 0.2f}},
+      {{-0.5f, 0.5f}, {0.9f, 0.1f, 0.7f}}
+    };
 
     static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 };
