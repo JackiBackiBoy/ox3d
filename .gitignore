@@ -2,5 +2,6 @@
 **/.cache
 build
 
-# macOS
-.DS_Store
+# Other
+.spv # binary shader files
+.DS_Store # macOS metadata file
