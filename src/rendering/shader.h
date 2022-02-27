@@ -1,5 +1,6 @@
 #ifndef SHADER_HEADER
 #define SHADER_HEADER
+#define ENGINE_DIR "../"
 
 #include <string>
 #include <vector>

@@ -3,7 +3,8 @@
 #include <iostream>
 
 void Shader::loadVertexShader(const std::string& path) {
-  std::ifstream fileStream(path, std::ios::ate | std::ios::binary); // load binary SPIRV file (from the end)
+  std::string enginePath = ENGINE_DIR + path;
+  std::ifstream fileStream(enginePath, std::ios::ate | std::ios::binary); // load binary SPIRV file (from the end)
 
   if (!fileStream.is_open()) {
     throw std::runtime_error("SHADER ERROR: Failed to open shader file!");
@@ -19,7 +20,8 @@ void Shader::loadVertexShader(const std::string& path) {
 }
 
 void Shader::loadFragmentShader(const std::string& path) {
-  std::ifstream fileStream(path, std::ios::ate | std::ios::binary); // load binary SPIRV file (from the end)
+  std::string enginePath = ENGINE_DIR + path;
+  std::ifstream fileStream(enginePath, std::ios::ate | std::ios::binary); // load binary SPIRV file (from the end)
 
   if (!fileStream.is_open()) {
     throw std::runtime_error("SHADER ERROR: Failed to open shader file!");

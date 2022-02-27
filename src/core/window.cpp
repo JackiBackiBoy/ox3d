@@ -21,8 +21,8 @@ void Window::createWindow() {
 }
 
 void Window::onStart() {
-  m_Shader.loadVertexShader("assets/shaders/lightingShaderVert.spv");
-  m_Shader.loadFragmentShader("assets/shaders/lightingShaderFrag.spv");
+  m_Shader.loadVertexShader("shaders/lightingShader.vert.spv");
+  m_Shader.loadFragmentShader("shaders/lightingShader.frag.spv");
 
   m_GraphicsManager->addShader(&m_Shader);
 }
