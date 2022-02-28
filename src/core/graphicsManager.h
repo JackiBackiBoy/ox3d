@@ -1,5 +1,6 @@
 #ifndef GRAPHICS_MANAGER_HEADER
 #define GRAPHICS_MANAGER_HEADER
+#define GLM_FORCE_RADIANS
 
 #include "window.h"
 #include <vector>
@@ -84,7 +85,16 @@ class GraphicsManager {
     void recreateSwapChain();
     void cleanupSwapChain();
     void createVertexBuffer();
+    void createIndexBuffer();
+    void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
+                      VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
     uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+    void createDescriptorSetLayout();
+    void createUniformBuffers();
+    void updateUniformBuffer(uint32_t currentImage);
+    void createDescriptorPool();
+    void createDescriptorSets();
 
     Window* m_Window;
     VkInstance m_Instance;
@@ -101,6 +111,7 @@ class GraphicsManager {
     std::vector<VkImageView> m_SwapChainImageViews;
     std::vector<Shader*> m_Shaders;
     VkRenderPass m_RenderPass;
+    VkDescriptorSetLayout m_DescriptorSetLayout;
     VkPipelineLayout m_PipelineLayout;
     VkPipeline m_GraphicsPipeline;
     std::vector<VkFramebuffer> m_SwapChainFramebuffers;
@@ -113,11 +124,22 @@ class GraphicsManager {
     uint32_t m_CurrentFrame = 0;
     VkBuffer m_VertexBuffer;
     VkDeviceMemory m_VertexBufferMemory;
+    VkBuffer m_IndexBuffer;
+    VkDeviceMemory m_IndexBufferMemory;
+    std::vector<VkBuffer> m_UniformBuffers;
+    std::vector<VkDeviceMemory> m_UniformBuffersMemory;
+    VkDescriptorPool m_DescriptorPool;
+    std::vector<VkDescriptorSet> m_DescriptorSets;
 
     const std::vector<Vertex> m_Vertices = {
-      {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-      {{0.5f, 0.5f}, {0.5f, 1.0f, 0.2f}},
-      {{-0.5f, 0.5f}, {0.9f, 0.1f, 0.7f}}
+      {{ -0.5f, -0.5f}, { 1.0f, 0.0f, 0.0f }},
+      {{  0.5f, -0.5f}, { 0.5f, 1.0f, 0.2f }},
+      {{  0.5f,  0.5f}, { 0.9f, 0.1f, 0.7f }},
+      {{ -0.5f,  0.5f}, { 1.0f, 1.0f, 1.0f }}
+    };
+
+    const std::vector<uint32_t> m_Indices = {
+      0, 1, 2, 2, 3, 0
     };
 
     static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
