@@ -104,6 +104,9 @@ class GraphicsManager {
     void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout,
                                VkImageLayout newLayout);
     void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+    void createTextureImageView();
+    VkImageView createImageView(VkImage image, VkFormat format);
+    void createTextureSampler();
 
     Window* m_Window;
     VkInstance m_Instance;
@@ -141,12 +144,14 @@ class GraphicsManager {
     std::vector<VkDescriptorSet> m_DescriptorSets;
     VkImage m_TextureImage;
     VkDeviceMemory m_TextureImageMemory;
+    VkImageView m_TextureImageView;
+    VkSampler m_TextureSampler;
 
     const std::vector<Vertex> m_Vertices = {
-      {{ -0.5f, -0.5f}, { 1.0f, 0.0f, 0.0f }},
-      {{  0.5f, -0.5f}, { 0.5f, 1.0f, 0.2f }},
-      {{  0.5f,  0.5f}, { 0.9f, 0.1f, 0.7f }},
-      {{ -0.5f,  0.5f}, { 1.0f, 1.0f, 1.0f }}
+      {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+      {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+      {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+      {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
     };
 
     const std::vector<uint32_t> m_Indices = {
