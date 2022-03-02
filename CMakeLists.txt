@@ -14,6 +14,8 @@ if (WIN32)
   set(GLM_PATH ${PROJECT_SOURCE_DIR}/dependencies/GLM)
 endif()
 
+set(STB_PATH ${PROJECT_SOURCE_DIR}/dependencies/stb)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -58,6 +60,7 @@ add_executable(ox3d ${SOURCE_FILES} ${HEADER_FILES})
 
 # Standard c++ version
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+target_compile_definitions(${PROJECT_NAME} PRIVATE ENGINE_DIR="../")
 
 if (WIN32)
   target_include_directories(${PROJECT_NAME} PUBLIC
@@ -65,6 +68,7 @@ if (WIN32)
     ${Vulkan_INCLUDE_DIRS}
     ${GLFW_INCLUDE_DIRS}
     ${GLM_PATH}/include
+    ${STB_PATH}
   )
 
   target_link_directories(${PROJECT_NAME} PUBLIC
@@ -80,6 +84,7 @@ elseif (APPLE)
   target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/src
     ${Vulkan_INCLUDE_DIRS}
+    ${STB_PATH}
   )
 
   target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES})

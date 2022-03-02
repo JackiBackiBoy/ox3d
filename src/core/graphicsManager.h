@@ -95,6 +95,15 @@ class GraphicsManager {
     void updateUniformBuffer(uint32_t currentImage);
     void createDescriptorPool();
     void createDescriptorSets();
+    void createTextureImage();
+    void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
+                     VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
+                     VkImage& image, VkDeviceMemory& imageMemory);
+    VkCommandBuffer beginSingleTimeCommands();
+    void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+    void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout,
+                               VkImageLayout newLayout);
+    void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
     Window* m_Window;
     VkInstance m_Instance;
@@ -130,6 +139,8 @@ class GraphicsManager {
     std::vector<VkDeviceMemory> m_UniformBuffersMemory;
     VkDescriptorPool m_DescriptorPool;
     std::vector<VkDescriptorSet> m_DescriptorSets;
+    VkImage m_TextureImage;
+    VkDeviceMemory m_TextureImageMemory;
 
     const std::vector<Vertex> m_Vertices = {
       {{ -0.5f, -0.5f}, { 1.0f, 0.0f, 0.0f }},
