@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "graphicsManager.h"
+#include "rendering/model.h"
 
 Window::Window(const uint32_t& width, const uint32_t& height, const std::string& title)
   : m_Width(width), m_Height(height), m_Title(title) {
@@ -21,10 +22,14 @@ void Window::createWindow() {
 }
 
 void Window::onStart() {
+  // Shaders
   m_Shader.loadVertexShader("shaders/lightingShader.vert.spv");
   m_Shader.loadFragmentShader("shaders/lightingShader.frag.spv");
-
   m_GraphicsManager->addShader(&m_Shader);
+
+  // Models
+  Model cube;
+  cube.loadFromFile("assets/models/cube.gltf");
 }
 
 void Window::onUpdate() {

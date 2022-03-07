@@ -50,6 +50,16 @@ else()
   message(STATUS "Using GLFW lib at: ${GLFW_LIB}")
 endif()
 
+# 3. Find Assimp library
+if (APPLE)
+  find_package(ASSIMP REQUIRED)
+endif()
+if (ASSIMP_FOUND)
+  message(STATUS "Found Asset Import Library (Assimp)!")
+else()
+  message(STATUS "Could not find Asset Import Library (Assimp)!")
+endif()
+
 # Retrieve all source files
 file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
@@ -60,7 +70,10 @@ add_executable(ox3d ${SOURCE_FILES} ${HEADER_FILES})
 
 # Standard c++ version
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-target_compile_definitions(${PROJECT_NAME} PRIVATE ENGINE_DIR="../")
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+  ENGINE_DIR="../"
+  NDEBUG
+)
 
 if (WIN32)
   target_include_directories(${PROJECT_NAME} PUBLIC
@@ -85,9 +98,10 @@ elseif (APPLE)
     ${PROJECT_SOURCE_DIR}/src
     ${Vulkan_INCLUDE_DIRS}
     ${STB_PATH}
+    ${ASSIMP_INCLUDE_DIR}
   )
 
-  target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES} ${ASSIMP_LIBRARIES})
 endif()
 
 # ------ Compiling shader files to SPIRV format ------
