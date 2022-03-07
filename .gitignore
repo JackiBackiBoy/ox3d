@@ -4,4 +4,4 @@ build
 
 # Other
 *.spv # binary shader files
-.DS_Store # macOS metadata file
+**/.DS_Store # macOS metadata file
