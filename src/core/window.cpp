@@ -30,6 +30,9 @@ void Window::onStart() {
   // Models
   Model cube;
   cube.loadFromFile("assets/models/cube.gltf");
+
+  m_GraphicsManager->m_Vertices = cube.getVertices();
+  m_GraphicsManager->m_Indices = cube.getIndices();
 }
 
 void Window::onUpdate() {

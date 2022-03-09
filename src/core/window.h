@@ -1,7 +1,6 @@
-#define GLFW_INCLUDE_VULKAN
+#pragma once
 
-#ifndef WINDOW_HEADER
-#define WINDOW_HEADER
+#define GLFW_INCLUDE_VULKAN
 
 class GraphicsManager;
 
@@ -32,4 +31,3 @@ class Window {
     GraphicsManager* m_GraphicsManager;
     Shader m_Shader;
 };
-#endif

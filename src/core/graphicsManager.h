@@ -1,5 +1,5 @@
-#ifndef GRAPHICS_MANAGER_HEADER
-#define GRAPHICS_MANAGER_HEADER
+#pragma once
+
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
@@ -47,6 +47,23 @@ class GraphicsManager {
     void addShader(Shader* shader);
     void renderFrame();
     static void onResize(GLFWwindow* window, int width, int height);
+
+    std::vector<Vertex> m_Vertices = {
+      {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+      {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+      {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+      {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+
+      {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+      {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+      {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
+    };
+
+    std::vector<uint32_t> m_Indices = {
+      0, 1, 2, 2, 3, 0,
+      4, 5, 6, 6, 7, 4
+    };
 
   private:
     bool checkValidationLayerSupport();
@@ -156,23 +173,5 @@ class GraphicsManager {
     VkDeviceMemory m_DepthImageMemory;
     VkImageView m_DepthImageView;
 
-    const std::vector<Vertex> m_Vertices = {
-      {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-      {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-      {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-      {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-
-      {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-      {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-      {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
-    };
-
-    const std::vector<uint32_t> m_Indices = {
-      0, 1, 2, 2, 3, 0,
-      4, 5, 6, 6, 7, 4
-    };
-
     static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 };
-#endif

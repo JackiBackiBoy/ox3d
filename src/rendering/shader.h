@@ -1,5 +1,4 @@
-#ifndef SHADER_HEADER
-#define SHADER_HEADER
+#pragma once
 
 #include <string>
 #include <vector>
@@ -18,4 +17,3 @@ class Shader {
     std::vector<char> m_VertexShaderCode;
     std::vector<char> m_FragmentShaderCode;
 };
-#endif

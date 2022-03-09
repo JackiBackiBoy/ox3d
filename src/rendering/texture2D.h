@@ -1,5 +1,5 @@
-#ifndef TEXTURE_2D_HEADER
-#define TEXTURE_2D_HEADER
+#pragma once
+
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <string>
@@ -18,4 +18,3 @@ class Texture2D {
     int m_Height;
     VkDeviceSize m_Size;
 };
-#endif
