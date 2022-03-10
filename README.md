@@ -14,7 +14,7 @@ However, the Vulkan SDK provides *partial* Vulkan support through the use of the
 
 # Build Instructions
 ## Prerequisites
-- [Vulkan SDK](https://www.lunarg.com/vulkan-sdk/) version 1.3.204 or newer
+- [Vulkan® SDK](https://www.lunarg.com/vulkan-sdk/) version 1.3.204 or newer
 - [CMake](https://cmake.org/) version 3.20.0 or newer
 
 
@@ -27,7 +27,7 @@ cmake ..
 make
 ```
 
-This will generate an executable file named ```ox3d``` which can then be ran using ```./ox3d```.
+This will generate an executable file named ```ox3d.exe``` which can then be ran using ```./ox3d.exe```.
 
 ## Building for macOS
 Installing CMake can either be done manually by following the link above, or by using a package manager such as [Homebrew](https://brew.sh/).
