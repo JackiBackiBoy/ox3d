@@ -19,7 +19,7 @@ However, the Vulkan SDK provides *partial* Vulkan support through the use of the
 
 
 ## Building for Windows
-In order to build one can use the included build-script ```winBuild.bat```, or by building it manually with the follow shell commands:
+In order to build one can use the included build-script ```winBuild.bat```, or by building it manually with the following shell commands:
 ```bash
 mkdir build
 cd build
@@ -30,12 +30,12 @@ make
 This will generate an executable file named ```ox3d``` which can then be ran using ```./ox3d```.
 
 ## Building for macOS
-Installing CMake can either be done manually by following the link above, or by using a package manager such as [Homebrew](https://brew.sh/)
+Installing CMake can either be done manually by following the link above, or by using a package manager such as [Homebrew](https://brew.sh/).
 ```bash
 brew install cmake
 ```
 
-The project can then be built by using the included build-script ```unixBuild.sh```, or by building it manually with the follow shell commands:
+The project can then be built by using the included build-script ```unixBuild.sh```, or by building it manually with the following shell commands:
 ```bash
 mkdir build
 cd build
