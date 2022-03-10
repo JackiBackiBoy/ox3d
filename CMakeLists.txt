@@ -144,3 +144,10 @@ add_custom_target(
   Shaders
   DEPENDS ${SPIRV_BINARY_FILES}
 )
+
+# Automatically copying .dll files into the build directory
+if (WIN32)
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${ASSIMP_LIBRARIES}/libassimp-5.dll ${PROJECT_SOURCE_DIR}/build
+  )
+endif()
