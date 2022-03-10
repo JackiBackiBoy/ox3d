@@ -12,6 +12,7 @@ if (WIN32)
   set(GLFW_PATH ${PROJECT_SOURCE_DIR}/dependencies/GLFW/windows)
   set(VULKAN_SDK_PATH C:/VulkanSDK/1.3.204.0)
   set(GLM_PATH ${PROJECT_SOURCE_DIR}/dependencies/GLM)
+  set(ASSIMP_PATH ${PROJECT_SOURCE_DIR}/dependencies/assimp/windows)
 endif()
 
 set(STB_PATH ${PROJECT_SOURCE_DIR}/dependencies/stb)
@@ -51,11 +52,17 @@ else()
 endif()
 
 # 3. Find Assimp library
-if (APPLE)
+if (DEFINED ASSIMP_PATH)
+  set(ASSIMP_INCLUDE_DIR "${ASSIMP_PATH}/include")
+  set(ASSIMP_LIBRARIES "${ASSIMP_PATH}/lib")
+  set(ASSIMP_FOUND "True")
+else()
   find_package(ASSIMP REQUIRED)
 endif()
+
 if (ASSIMP_FOUND)
-  message(STATUS "Found Asset Import Library (Assimp)!")
+  message(STATUS "Found Assimp at: ${ASSIMP_INCLUDE_DIR}")
+  message(STATUS "Using Assimp lib at: ${ASSIMP_LIBRARIES}")
 else()
   message(STATUS "Could not find Asset Import Library (Assimp)!")
 endif()
@@ -82,14 +89,16 @@ if (WIN32)
     ${GLFW_INCLUDE_DIRS}
     ${GLM_PATH}/include
     ${STB_PATH}
+    ${ASSIMP_INCLUDE_DIR}
   )
 
   target_link_directories(${PROJECT_NAME} PUBLIC
     ${Vulkan_LIBRARIES}
     ${GLFW_LIB}
+    ${ASSIMP_LIBRARIES}
   )
 
-  target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1)
+target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1 libassimp)
 elseif (APPLE)
   message(STATUS "Creating build for macOS!")
   message(STATUS "Vulkan include dir: " ${Vulkan_INCLUDE_DIRS})
