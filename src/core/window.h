@@ -2,12 +2,11 @@
 
 #define GLFW_INCLUDE_VULKAN
 
-class GraphicsManager;
-
 #include <cstdint>
 #include <string>
 #include <GLFW/glfw3.h>
 #include "rendering/shader.h"
+#include "graphicsManager.h"
 
 class Window {
   public:
@@ -20,6 +19,9 @@ class Window {
 
     inline std::string getTitle() { return m_Title; }
     inline GLFWwindow* getRawWindow() { return m_RawWindow; }
+    inline GraphicsManager* getGraphicsManager() { return m_GraphicsManager; }
+
+    static Window* currentWindow;
 
   private:
     void createWindow();

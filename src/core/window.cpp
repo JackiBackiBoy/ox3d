@@ -1,13 +1,12 @@
 #include "window.h"
 #include <iostream>
 #include <vector>
-#include "graphicsManager.h"
 #include "rendering/model.h"
 
 Window::Window(const uint32_t& width, const uint32_t& height, const std::string& title)
   : m_Width(width), m_Height(height), m_Title(title) {
     createWindow();
-    m_GraphicsManager = new GraphicsManager(this);
+    m_GraphicsManager = new GraphicsManager();
 }
 
 void Window::createWindow() {
@@ -29,7 +28,7 @@ void Window::onStart() {
 
   // Models
   Model cube;
-  cube.loadFromFile("assets/models/cube.gltf");
+  cube.loadFromFile("assets/models/waterbottle/WaterBottle.gltf");
 
   m_GraphicsManager->m_Vertices = cube.getVertices();
   m_GraphicsManager->m_Indices = cube.getIndices();
@@ -61,3 +60,4 @@ void Window::run() {
   glfwTerminate();
 }
 
+Window* Window::currentWindow = nullptr;

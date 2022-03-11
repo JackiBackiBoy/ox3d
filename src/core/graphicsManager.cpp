@@ -8,11 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <chrono>
-#include <stb_image.h>
-
-GraphicsManager::GraphicsManager(Window* window) {
-  m_Window = window;
-}
+#include "window.h"
 
 void GraphicsManager::loadVulkan() {
   createVkInstance();
@@ -28,7 +24,8 @@ void GraphicsManager::loadVulkan() {
   createCommandPool();
   createDepthResources();
   createFramebuffers();
-  createTextureImage();
+
+  createTextureImages();
   createTextureImageView();
   createTextureSampler();
   createVertexBuffer();
@@ -59,8 +56,9 @@ void GraphicsManager::destroyVulkan() {
   vkDestroyImageView(m_LogicalDevice, m_TextureImageView, nullptr);
 
   // Destroy images and free memory
-  vkDestroyImage(m_LogicalDevice, m_TextureImage, nullptr);
-  vkFreeMemory(m_LogicalDevice, m_TextureImageMemory, nullptr);
+  // TODO: Fix model cleanup to not be dependent on graphics manager
+  vkDestroyImage(m_LogicalDevice, m_TextureSubmits[0]->vkImage, nullptr);
+  vkFreeMemory(m_LogicalDevice, m_TextureSubmits[0]->vkMemory, nullptr);
 
   vkDestroyDescriptorSetLayout(m_LogicalDevice, m_DescriptorSetLayout, nullptr);
 
@@ -249,7 +247,7 @@ void GraphicsManager::setupDebugMessenger() {
 }
 
 void GraphicsManager::createSurface() {
-  if (glfwCreateWindowSurface(m_Instance, m_Window->getRawWindow(), nullptr, &m_Surface) != VK_SUCCESS) {
+  if (glfwCreateWindowSurface(m_Instance, Window::currentWindow->getRawWindow(), nullptr, &m_Surface) != VK_SUCCESS) {
     throw std::runtime_error("VULKAN ERROR: Failed to create window surface!");
   }
 }
@@ -517,7 +515,7 @@ VkExtent2D GraphicsManager::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& cap
   int width;
   int height;
 
-  glfwGetFramebufferSize(m_Window->getRawWindow(), &width, &height);
+  glfwGetFramebufferSize(Window::currentWindow->getRawWindow(), &width, &height);
 
   VkExtent2D actualExtent = {
     static_cast<uint32_t>(width),
@@ -957,9 +955,9 @@ void GraphicsManager::recreateSwapChain() {
   int width = 0;
   int height = 0;
 
-  glfwGetFramebufferSize(m_Window->getRawWindow(), &width, &height);
+  glfwGetFramebufferSize(Window::currentWindow->getRawWindow(), &width, &height);
   while (width == 0 || height == 0) {
-    glfwGetFramebufferSize(m_Window->getRawWindow(), &width, &height);
+    glfwGetFramebufferSize(Window::currentWindow->getRawWindow(), &width, &height);
     glfwWaitEvents();
   }
 
@@ -1147,7 +1145,7 @@ void GraphicsManager::updateUniformBuffer(uint32_t currentImage) {
 
   UniformBufferObject ubo{};
   ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  ubo.view = glm::lookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+  ubo.view = glm::lookAt(glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.0f, 0.0f, 0.0f),
                          glm::vec3(0.0f, 0.0, 1.0f));
   ubo.projection = glm::perspective(glm::radians(60.0f),
                                     m_SwapChainExtent.width / (float)m_SwapChainExtent.height,
@@ -1229,40 +1227,37 @@ void GraphicsManager::createDescriptorSets() {
   }
 }
 
-void GraphicsManager::createTextureImage() {
-  int channels;
-  int width;
-  int height;
-
-  std::string path = "assets/textures/stone.jpg";
-  std::string enginePath = ENGINE_DIR + path;
-  stbi_uc* pixels = stbi_load(enginePath.c_str(), &width, &height, &channels, STBI_rgb_alpha);
-  VkDeviceSize imageSize = width * height * 4;
-
-  if (!pixels) {
-    throw std::runtime_error("VULKAN ERROR: Failed to load texture image!");
-  }
-
+void GraphicsManager::createTextureImages() {
+  // TODO: Iterate over all submitted textures
+  // Initialize textures in Vulkan
   VkBuffer stagingBuffer;
   VkDeviceMemory stagingBufferMemory;
+  VkDeviceSize imageSize = m_TextureSubmits[0]->getSize();
+
   createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-               VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+                                VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
   void* data;
   vkMapMemory(m_LogicalDevice, stagingBufferMemory, 0, imageSize, 0, &data);
-    memcpy(data, pixels, static_cast<size_t>(imageSize));
+    memcpy(data, m_TextureSubmits[0]->getPixels(), static_cast<size_t>(imageSize));
   vkUnmapMemory(m_LogicalDevice, stagingBufferMemory);
-  stbi_image_free(pixels);
+  m_TextureSubmits[0]->cleanup();
 
-  createImage(width, height, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
-              VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_TextureImage, m_TextureImageMemory);
+  createImage(
+      m_TextureSubmits[0]->getWidth(), m_TextureSubmits[0]->getHeight(), VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL,
+      VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_TextureSubmits[0]->vkImage, m_TextureSubmits[0]->vkMemory);
 
-  transitionImageLayout(m_TextureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED,
-                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    copyBufferToImage(stagingBuffer, m_TextureImage, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
-  transitionImageLayout(m_TextureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                        VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+  transitionImageLayout(
+      m_TextureSubmits[0]->vkImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED,
+      VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+    copyBufferToImage(stagingBuffer, m_TextureSubmits[0]->vkImage,
+                      m_TextureSubmits[0]->getWidth(), m_TextureSubmits[0]->getHeight());
+
+  transitionImageLayout(
+      m_TextureSubmits[0]->vkImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
   // Cleanup
   vkDestroyBuffer(m_LogicalDevice, stagingBuffer, nullptr);
@@ -1428,7 +1423,9 @@ void GraphicsManager::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t
 }
 
 void GraphicsManager::createTextureImageView() {
-  m_TextureImageView = createImageView(m_TextureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+  // TODO: Fix model loading to not be dependent on graphics manager
+  m_TextureImageView = createImageView(m_TextureSubmits[0]->vkImage,
+                                       VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
 }
 
 VkImageView GraphicsManager::createImageView(VkImage image, VkFormat format,
@@ -1519,4 +1516,8 @@ VkFormat GraphicsManager::findDepthFormat() {
 
 bool GraphicsManager::hasStencilComponent(VkFormat format) {
   return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
+}
+
+void GraphicsManager::submitTexture(Texture2D* texture) {
+  m_TextureSubmits.push_back(texture);
 }

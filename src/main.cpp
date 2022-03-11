@@ -6,21 +6,16 @@
 
 int main() {
   //Create window
-  Window* window = new Window(500, 500, "ox3d");
+  Window::currentWindow = new Window(500, 500, "ox3d");
 
   try {
-    window->run();
+    Window::currentWindow->run();
   }
   catch (const std::exception& e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
   }
 
-  // Delete window
-  window = nullptr;
-  delete window;
-
-  std::vector<int> extensions(5);
   glfwInit();
 
   return 0;

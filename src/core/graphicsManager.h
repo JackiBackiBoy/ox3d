@@ -3,10 +3,12 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
-#include "window.h"
 #include <vector>
 #include <optional>
 #include "rendering/vertex.h"
+#include "rendering/shader.h"
+#include <GLFW/glfw3.h>
+#include "rendering/texture2D.h"
 
 const std::vector<const char*> validationLayers = {
   "VK_LAYER_KHRONOS_validation"
@@ -40,13 +42,25 @@ struct SwapChainSupportDetails {
 // Graphics Manager class
 class GraphicsManager {
   public:
-    GraphicsManager(Window* window);
+    GraphicsManager() {};
 
     void loadVulkan();
     void destroyVulkan();
     void addShader(Shader* shader);
     void renderFrame();
     static void onResize(GLFWwindow* window, int width, int height);
+    void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
+                      VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+    void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
+                     VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
+                     VkImage& image, VkDeviceMemory& imageMemory);
+    void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout,
+                               VkImageLayout newLayout);
+    void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+    void submitTexture(Texture2D* texture);
+
+    // Getters
+    inline VkDevice getLogicalDevice() { return m_LogicalDevice; }
 
     std::vector<Vertex> m_Vertices = {
       {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
@@ -104,8 +118,6 @@ class GraphicsManager {
     void cleanupSwapChain();
     void createVertexBuffer();
     void createIndexBuffer();
-    void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
-                      VkBuffer& buffer, VkDeviceMemory& bufferMemory);
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
     uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
     void createDescriptorSetLayout();
@@ -113,15 +125,9 @@ class GraphicsManager {
     void updateUniformBuffer(uint32_t currentImage);
     void createDescriptorPool();
     void createDescriptorSets();
-    void createTextureImage();
-    void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling,
-                     VkImageUsageFlags usage, VkMemoryPropertyFlags properties,
-                     VkImage& image, VkDeviceMemory& imageMemory);
+    void createTextureImages();
     VkCommandBuffer beginSingleTimeCommands();
     void endSingleTimeCommands(VkCommandBuffer commandBuffer);
-    void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout,
-                               VkImageLayout newLayout);
-    void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
     void createTextureImageView();
     VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
     void createTextureSampler();
@@ -131,7 +137,6 @@ class GraphicsManager {
     VkFormat findDepthFormat();
     bool hasStencilComponent(VkFormat format);
 
-    Window* m_Window;
     VkInstance m_Instance;
     VkDebugUtilsMessengerEXT m_DebugMessenger;
     VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
@@ -165,13 +170,13 @@ class GraphicsManager {
     std::vector<VkDeviceMemory> m_UniformBuffersMemory;
     VkDescriptorPool m_DescriptorPool;
     std::vector<VkDescriptorSet> m_DescriptorSets;
-    VkImage m_TextureImage;
-    VkDeviceMemory m_TextureImageMemory;
     VkImageView m_TextureImageView;
     VkSampler m_TextureSampler;
     VkImage m_DepthImage;
     VkDeviceMemory m_DepthImageMemory;
     VkImageView m_DepthImageView;
+
+    std::vector<Texture2D*> m_TextureSubmits;
 
     static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 };

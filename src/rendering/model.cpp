@@ -16,15 +16,19 @@ void Model::loadFromFile(const std::string& path) {
   }
 
   // Get model directory to locate model resources
-  std::string modelDir = enginePath.substr(0, enginePath.find_last_of('/'));
+  std::string modelDir = path.substr(0, path.find_last_of('/'));
   std::cout << "Model directory: " << modelDir << std::endl;
 
   initFromScene(scene);
+
+  initMaterials(scene, modelDir);
 }
 
 void Model::initFromScene(const aiScene* scene) {
   m_Meshes.resize(scene->mNumMeshes);
-  // TODO: m_Textures.resize(scene->mNumMaterials);
+  m_Textures.resize(scene->mNumMaterials);
+
+  std::cout << "Model material count: " << m_Textures.size() << std::endl;
 
   // Count number of vertices and indices
   uint32_t numVertices = 0;
@@ -38,8 +42,6 @@ void Model::initFromScene(const aiScene* scene) {
 
   // Initialize all meshes within the model
   initMeshes(scene);
-
-  // TODO: Implement materials
 }
 
 void Model::countVerticesAndIndices(const aiScene* scene, uint32_t& numVertices,
@@ -55,13 +57,6 @@ void Model::countVerticesAndIndices(const aiScene* scene, uint32_t& numVertices,
     numVertices +=
       static_cast<uint32_t>(scene->mMeshes[i]->mNumVertices);
     numIndices += m_Meshes[i].indices;
-  }
-}
-
-void Model::processNode(aiNode* node, const aiScene* scene) {
-  // Process all children nodes recursively
-  for (size_t i = 0; i < node->mNumChildren; i++) {
-    processNode(node->mChildren[i], scene);
   }
 }
 
@@ -105,5 +100,28 @@ void Model::initSingleMesh(const aiMesh* mesh) {
     m_Indices.push_back(face.mIndices[0]);
     m_Indices.push_back(face.mIndices[1]);
     m_Indices.push_back(face.mIndices[2]);
+  }
+}
+
+void Model::initMaterials(const aiScene* scene, const std::string& modelDir) {
+  for (size_t i = 0; i < scene->mNumMaterials; i++) {
+    const aiMaterial* material = scene->mMaterials[i];
+
+    // Check texture count, continue if they exist
+    if (material->GetTextureCount(aiTextureType_DIFFUSE) == 0) {
+      std::cout << "ASSIMP WARNING: No model textures found!" << std::endl;
+      return;
+    }
+
+    aiString tempPath;
+    if (material->GetTexture(aiTextureType_DIFFUSE, 0, &tempPath, NULL, NULL, NULL, NULL) != AI_SUCCESS) {
+      throw std::runtime_error("ASSIMP ERROR: Failed to retrieve model texture!");
+    }
+
+    std::string texturePath = modelDir + "/" + std::string(tempPath.data);
+    std::cout << "ASSIMP INFO: Loading texture from " << texturePath << std::endl;
+
+    m_Textures[i] = new Texture2D();
+    m_Textures[i]->loadFromFile(texturePath);
   }
 }

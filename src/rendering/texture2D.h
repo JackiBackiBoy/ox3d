@@ -3,6 +3,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <string>
+#include <cstdint>
 #include <vulkan/vulkan.h>
 
 class Texture2D {
@@ -10,11 +11,19 @@ class Texture2D {
     Texture2D() {};
     
     void loadFromFile(const std::string& path);
-    inline int getWidth() { return m_Width; };
-    inline int getHeight() { return m_Height; };
+    void cleanup();
+
+    inline uint32_t& getWidth() { return m_Width; };
+    inline uint32_t& getHeight() { return m_Height; };
+    inline uint64_t& getSize() { return m_Size; };
+    inline unsigned char* getPixels() { return m_Pixels; }
+
+    VkImage vkImage;
+    VkDeviceMemory vkMemory;
 
   private:
-    int m_Width;
-    int m_Height;
-    VkDeviceSize m_Size;
+    uint32_t m_Width;
+    uint32_t m_Height;
+    uint64_t m_Size;
+    unsigned char* m_Pixels;
 };
