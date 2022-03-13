@@ -1,5 +1,8 @@
 #include "camera.h"
 #include <cmath>
+#include <glm/gtc/constants.hpp>
+#include <iostream>
+#include <math.h>
 
 glm::vec3 Camera::getRight() {
   glm::vec3 up = { 0.0f, 1.0f, 0.0f };
@@ -9,11 +12,14 @@ glm::vec3 Camera::getRight() {
 
 void Camera::setYaw(const float& angle) {
   m_Yaw = angle;
-
-  m_Forward = { sin(angle), m_Forward.y, -cos(angle) };
-  m_Forward = glm::normalize(m_Forward);
 }
 
 void Camera::setPitch(const float& angle) {
+  m_Pitch = angle;
 
+  // Euler angles direction vector
+  m_Forward.x = -cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+  m_Forward.y = -sin(glm::radians(m_Pitch));
+  m_Forward.z = -sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+  m_Forward = glm::normalize(m_Forward);
 }
