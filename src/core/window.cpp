@@ -23,6 +23,7 @@ void Window::createWindow() {
   glfwSetInputMode(m_RawWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSwapInterval(1);
   glfwSetCursorPosCallback(m_RawWindow, Mouse::onMouseMove);
+  glfwSetScrollCallback(m_RawWindow, Mouse::onMouseScroll);
 }
 
 void Window::onStart() {
@@ -39,11 +40,13 @@ void Window::onStart() {
   m_GraphicsManager->m_Indices = cube.getIndices();
 
   m_Camera = Camera();
-  m_Camera.position() = { 0.0f, 0.0f, 2.0f };
+  m_Camera.setPosition({ 0.0f, 0.0f, 2.0f });
   m_Camera.setYaw(90.0f);
+  m_Camera.setFOV(60.0f);
 }
 
 void Window::onUpdate(const float& deltaTime) {
+  // ------ Rotation with mouse ------
   glm::vec2 mousePos = Mouse::getPosition();
 
   // Fix for preventing violent camera rotation before
@@ -54,41 +57,49 @@ void Window::onUpdate(const float& deltaTime) {
 
   glm::vec2 deltaMousePos = mousePos - lastMousePos;
 
-  // Rotation with mouse
-  float newYaw = m_Camera.getYaw() + 0.05f * deltaMousePos.x;
-  m_Camera.setYaw(newYaw);
-  float newPitch = m_Camera.getPitch() + 0.05f * deltaMousePos.y;
-  m_Camera.setPitch(newPitch);
+  m_Camera.setYaw(m_Camera.getYaw() + 0.05f * deltaMousePos.x);
+  m_Camera.setPitch(m_Camera.getPitch() + 0.05f * deltaMousePos.y);
 
+  glm::vec3 camPos = m_Camera.getPosition();
   glm::vec3 camRight = m_Camera.getRight();
   glm::vec3 camUp = m_Camera.getUp();
   glm::vec3 camForward = m_Camera.getForward();
 
+  // ------ Mouse scrolling ------
+  float scrollDir = Mouse::getVerticalScroll();
+
+  if (scrollDir != 0.0f) {
+    m_Camera.setFOV(m_Camera.getFOV() - scrollDir);
+  }
+
+  // ------ Keyboard movement ------
   // Move forwards
   if (Keyboard::isKeyDown(KeyCode::W)) {
-    m_Camera.position() += camForward * deltaTime * 3.0f;
+    m_Camera.setPosition(camPos + camForward * deltaTime * 3.0f);
   }
   // Move horizontally to the left
   if (Keyboard::isKeyDown(KeyCode::A)) {
-    m_Camera.position() -= camRight * deltaTime * 3.0f;
+    m_Camera.setPosition(camPos - camRight * deltaTime * 3.0f);
   }
   // Move backwards
   if (Keyboard::isKeyDown(KeyCode::S)) {
-    m_Camera.position() -= camForward * deltaTime * 3.0f;
+    m_Camera.setPosition(camPos - camForward * deltaTime * 3.0f);
   }
   // Move horizontally to the right
   if (Keyboard::isKeyDown(KeyCode::D)) {
-    m_Camera.position() += camRight * deltaTime * 3.0f;
+    m_Camera.setPosition(camPos + camRight * deltaTime * 3.0f);
   }
 
   // Move upwards
   if (Keyboard::isKeyDown(KeyCode::Space)) {
-    m_Camera.position().y += deltaTime * 3.0f;
+    m_Camera.setPosition({ camPos.x, camPos.y + deltaTime * 3.0f, camPos.z });
   }
   // Move downwards
   if (Keyboard::isKeyDown(KeyCode::LeftControl)) {
-    m_Camera.position().y -= deltaTime * 3.0f;
+    m_Camera.setPosition({ camPos.x, camPos.y - deltaTime * 3.0f, camPos.z });
   }
+
+  m_Camera.update();
 
   lastMousePos = mousePos;
 }

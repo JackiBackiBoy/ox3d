@@ -37,5 +37,4 @@ class Window {
     Shader m_Shader;
     Camera m_Camera;
     glm::vec2 lastMousePos;
-    bool firstFrame = true;
 };
