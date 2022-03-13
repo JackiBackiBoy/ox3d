@@ -13,6 +13,7 @@ if (WIN32)
   set(VULKAN_SDK_PATH C:/VulkanSDK/1.3.204.0)
   set(GLM_PATH ${PROJECT_SOURCE_DIR}/dependencies/GLM)
   set(ASSIMP_PATH ${PROJECT_SOURCE_DIR}/dependencies/assimp/windows)
+  set(FREETYPE_PATH ${PROJECT_SOURCE_DIR}/dependencies/freetype/windows)
 endif()
 
 set(STB_PATH ${PROJECT_SOURCE_DIR}/dependencies/stb)
@@ -35,7 +36,7 @@ else()
   message(STATUS "Using vulkan lib at: ${Vulkan_LIBRARIES}")
 endif()
 
-# 2. Set GLFW_LIB
+# 2. Find GLFW
 if (DEFINED GLFW_PATH)
   message(STATUS "Using GLFW path at: " ${GLFW_PATH})
   set(GLFW_INCLUDE_DIRS "${GLFW_PATH}/include")
@@ -51,7 +52,7 @@ else()
   message(STATUS "Using GLFW lib at: ${GLFW_LIB}")
 endif()
 
-# 3. Find Assimp library
+# 3. Find Assimp
 if (DEFINED ASSIMP_PATH)
   set(ASSIMP_INCLUDE_DIR "${ASSIMP_PATH}/include")
   set(ASSIMP_LIBRARIES "${ASSIMP_PATH}/lib")
@@ -64,7 +65,23 @@ if (ASSIMP_FOUND)
   message(STATUS "Found Assimp at: ${ASSIMP_INCLUDE_DIR}")
   message(STATUS "Using Assimp lib at: ${ASSIMP_LIBRARIES}")
 else()
-  message(STATUS "Could not find Asset Import Library (Assimp)!")
+  message(STATUS "Could not find Assimp library!")
+endif()
+
+# 4. Find Freetype
+if (DEFINED FREETYPE_PATH)
+  set(FREETYPE_INCLUDE_DIR "${FREETYPE_PATH}/include")
+  set(FREETYPE_LIBRARIES "${FREETYPE_PATH}/lib")
+  set(FREETYPE_FOUND "True")
+else()
+  find_package(Freetype REQUIRED)
+endif()
+
+if (FREETYPE_FOUND)
+  message(STATUS "Found Freetype at: ${FREETYPE_INCLUDE_DIR}")
+  message(STATUS "Found Freetype lib at: ${FREETYPE_LIBRARIES}")
+else()
+  message(STATUS "Could not find Freetype library!")
 endif()
 
 # Retrieve all source files
@@ -90,15 +107,17 @@ if (WIN32)
     ${GLM_PATH}/include
     ${STB_PATH}
     ${ASSIMP_INCLUDE_DIR}
+    ${FREETYPE_INCLUDE_DIR}
   )
 
   target_link_directories(${PROJECT_NAME} PUBLIC
     ${Vulkan_LIBRARIES}
     ${GLFW_LIB}
     ${ASSIMP_LIBRARIES}
+    ${FREETYPE_LIBRARIES}
   )
 
-target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1 libassimp)
+  target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1 libassimp freetype)
 elseif (APPLE)
   message(STATUS "Creating build for macOS!")
   message(STATUS "Vulkan include dir: " ${Vulkan_INCLUDE_DIRS})
@@ -110,7 +129,7 @@ elseif (APPLE)
     ${ASSIMP_INCLUDE_DIR}
   )
 
-target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES} ${ASSIMP_LIBRARIES})
+  target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES} ${ASSIMP_LIBRARIES})
 endif()
 
 # ------ Compiling shader files to SPIRV format ------

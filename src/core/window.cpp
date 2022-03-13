@@ -4,6 +4,7 @@
 #include "rendering/model.h"
 #include "input/keyboard.h"
 #include "input/mouse.h"
+#include "ui/uiFont.h"
 
 Window::Window(const uint32_t& width, const uint32_t& height, const std::string& title)
   : m_Width(width), m_Height(height), m_Title(title) {
@@ -39,10 +40,15 @@ void Window::onStart() {
   m_GraphicsManager->m_Vertices = cube.getVertices();
   m_GraphicsManager->m_Indices = cube.getIndices();
 
+  // Camera
   m_Camera = Camera();
   m_Camera.setPosition({ 0.0f, 0.0f, 2.0f });
   m_Camera.setYaw(90.0f);
   m_Camera.setFOV(60.0f);
+
+  // User Interface
+  UIFont font;
+  font.loadFromFile("assets/fonts/segoeui.ttf");
 }
 
 void Window::onUpdate(const float& deltaTime) {
