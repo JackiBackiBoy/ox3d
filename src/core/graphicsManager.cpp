@@ -901,7 +901,7 @@ void GraphicsManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_
   renderPassInfo.renderArea.extent = m_SwapChainExtent;
 
   std::array<VkClearValue, 2> clearValues{};
-  clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 1.0f } };
+  clearValues[0].color = { { 0.392f, 0.584f, 0.929f, 1.0f } };
   clearValues[1].depthStencil = { 1.0f, 0 };
 
   renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
@@ -1144,9 +1144,13 @@ void GraphicsManager::updateUniformBuffer(uint32_t currentImage) {
   float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
   UniformBufferObject ubo{};
-  ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  ubo.view = glm::lookAt(glm::vec3(0.3f, 0.3f, 0.3f), glm::vec3(0.0f, 0.0f, 0.0f),
-                         glm::vec3(0.0f, 0.0, 1.0f));
+  //ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  ubo.model = glm::mat4(1.0f);
+
+  Camera& camera = Window::currentWindow->getCamera();
+  ubo.view = glm::lookAt(camera.getPosition(), // eye
+                         camera.getPosition() + camera.getForward(), // center
+                         glm::vec3(0.0f, 1.0f, 0.0f)); // up
   ubo.projection = glm::perspective(glm::radians(60.0f),
                                     m_SwapChainExtent.width / (float)m_SwapChainExtent.height,
                                     0.1f, 10.0f);

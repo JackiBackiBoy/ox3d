@@ -6,7 +6,7 @@
 
 int main() {
   //Create window
-  Window::currentWindow = new Window(500, 500, "ox3d");
+  Window::currentWindow = new Window(1280, 720, "ox3d");
 
   try {
     Window::currentWindow->run();
