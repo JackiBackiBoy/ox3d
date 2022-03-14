@@ -1,0 +1,14 @@
+prefix=/opt/homebrew/opt/freetype
+exec_prefix=/opt/homebrew/opt/freetype
+libdir=/opt/homebrew/opt/freetype/lib
+includedir=/opt/homebrew/opt/freetype/include
+
+Name: FreeType 2
+URL: https://freetype.org
+Description: A free, high-quality, and portable font engine.
+Version: 24.1.18
+Requires:
+Requires.private: 
+Libs: -L${libdir} -lfreetype
+Libs.private: -lz -lbz2 -L/opt/homebrew/Cellar/libpng/1.6.37/lib -lpng16 -lz
+Cflags: -I${includedir}/freetype2

@@ -14,6 +14,8 @@ if (WIN32)
   set(GLM_PATH ${PROJECT_SOURCE_DIR}/dependencies/GLM)
   set(ASSIMP_PATH ${PROJECT_SOURCE_DIR}/dependencies/assimp/windows)
   set(FREETYPE_PATH ${PROJECT_SOURCE_DIR}/dependencies/freetype/windows)
+elseif(APPLE)
+  set(FREETYPE_PATH ${PROJECT_SOURCE_DIR}/dependencies/freetype/macOS)
 endif()
 
 set(STB_PATH ${PROJECT_SOURCE_DIR}/dependencies/stb)
@@ -127,9 +129,14 @@ elseif (APPLE)
     ${Vulkan_INCLUDE_DIRS}
     ${STB_PATH}
     ${ASSIMP_INCLUDE_DIR}
+    ${FREETYPE_INCLUDE_DIR}
   )
 
-  target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES} ${ASSIMP_LIBRARIES})
+  target_link_directories(${PROJECT_NAME} PUBLIC
+    ${FREETYPE_LIBRARIES}
+  )
+
+  target_link_libraries(${PROJECT_NAME} glfw ${Vulkan_LIBRARIES} ${ASSIMP_LIBRARIES} libfreetype.dylib)
 endif()
 
 # ------ Compiling shader files to SPIRV format ------
