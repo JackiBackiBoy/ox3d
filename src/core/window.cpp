@@ -48,7 +48,7 @@ void Window::onStart() {
 
   // User Interface
   UIFont font;
-  font.loadFromFile("assets/fonts/segoeui.ttf");
+  font.loadFromFile("assets/fonts/segoeui.ttf", 12);
 }
 
 void Window::onUpdate(const float& deltaTime) {
