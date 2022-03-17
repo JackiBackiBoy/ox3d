@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include "core/window.h"
 
+using namespace ox;
+
 void Texture2D::loadFromFile(const std::string& path) {
   int channels;
   int tempWidth;

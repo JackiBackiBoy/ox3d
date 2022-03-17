@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 
+using namespace ox;
+
 void Shader::loadVertexShader(const std::string& path) {
   std::string enginePath = ENGINE_DIR + path;
   std::ifstream fileStream(enginePath, std::ios::ate | std::ios::binary); // load binary SPIRV file (from the end)

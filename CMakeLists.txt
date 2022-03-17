@@ -92,7 +92,7 @@ file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 # Retrieve all header files
 file(GLOB_RECURSE HEADER_FILES ${PROJECT_SOURCE_DIR}/src/*.h)
 
-add_executable(ox3d ${SOURCE_FILES} ${HEADER_FILES})
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
 
 # Standard c++ version
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)

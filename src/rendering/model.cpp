@@ -4,6 +4,8 @@
 #include <iostream>
 #include <stdexcept>
 
+using namespace ox;
+
 void Model::loadFromFile(const std::string& path) {
   std::string enginePath = ENGINE_DIR + path;
 

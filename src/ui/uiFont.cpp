@@ -1,6 +1,8 @@
 #include "uiFont.h"
 #include <stdexcept>
 
+using namespace ox;
+
 void UIFont::loadFromFile(const std::string& path, const uint32_t& size) {
   std::string enginePath = ENGINE_DIR + path;
 

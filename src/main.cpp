@@ -4,12 +4,13 @@
 #include "GLFW/glfw3.h"
 #include <vector>
 
+
 int main() {
   //Create window
-  Window::currentWindow = new Window(1280, 720, "ox3d");
+  ox::Window::currentWindow = new ox::Window(1280, 720, "ox3d");
 
   try {
-    Window::currentWindow->run();
+    ox::Window::currentWindow->run();
   }
   catch (const std::exception& e) {
     std::cerr << e.what() << std::endl;

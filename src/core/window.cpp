@@ -6,6 +6,8 @@
 #include "input/mouse.h"
 #include "ui/uiFont.h"
 
+using namespace ox;
+
 Window::Window(const uint32_t& width, const uint32_t& height, const std::string& title)
   : m_Width(width), m_Height(height), m_Title(title) {
     createWindow();
@@ -34,11 +36,12 @@ void Window::onStart() {
   m_GraphicsManager->addShader(&m_Shader);
 
   // Models
-  Model cube;
-  cube.loadFromFile("assets/models/waterbottle/WaterBottle.gltf");
+  Model waterbottle;
+  waterbottle.loadFromFile("assets/models/waterbottle/WaterBottle.gltf");
+  m_GraphicsManager->submitModel(waterbottle);
 
-  m_GraphicsManager->m_Vertices = cube.getVertices();
-  m_GraphicsManager->m_Indices = cube.getIndices();
+  m_GraphicsManager->m_Vertices = waterbottle.getVertices();
+  m_GraphicsManager->m_Indices = waterbottle.getIndices();
 
   // Camera
   m_Camera = Camera();

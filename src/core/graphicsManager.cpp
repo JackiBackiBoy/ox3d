@@ -10,6 +10,12 @@
 #include <chrono>
 #include "window.h"
 
+using namespace ox;
+
+void GraphicsManager::submitModel(const Model& model) {
+  //m_ModelQueue.push_back(model);
+}
+
 void GraphicsManager::loadVulkan() {
   createVkInstance();
   setupDebugMessenger();
@@ -1524,3 +1530,6 @@ bool GraphicsManager::hasStencilComponent(VkFormat format) {
 void GraphicsManager::submitTexture(Texture2D* texture) {
   m_TextureSubmits.push_back(texture);
 }
+
+const std::vector<const char*> GraphicsManager::deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+const std::vector<const char*> GraphicsManager::validationLayers = { "VK_LAYER_KHRONOS_validation" };

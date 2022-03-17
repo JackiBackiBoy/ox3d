@@ -1,6 +1,8 @@
 #include "mouse.h"
 #include "core/window.h"
 
+using namespace ox;
+
 bool Mouse::isButtonDown(const int& button) {
   return glfwGetMouseButton(Window::currentWindow->getRawWindow(), button);
 }

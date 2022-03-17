@@ -5,6 +5,8 @@
 #include <math.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+using namespace ox;
+
 glm::vec3 Camera::getRight() {
   return glm::normalize(glm::cross(m_Forward, m_Up));
 }
