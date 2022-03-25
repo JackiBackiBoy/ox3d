@@ -9,6 +9,7 @@ void Shader::loadVertexShader(const std::string& path) {
   std::ifstream fileStream(enginePath, std::ios::ate | std::ios::binary); // load binary SPIRV file (from the end)
 
   if (!fileStream.is_open()) {
+    std::cout << "Loading shader file from: " << enginePath << std::endl;
     throw std::runtime_error("SHADER ERROR: Failed to open shader file!");
   }
 

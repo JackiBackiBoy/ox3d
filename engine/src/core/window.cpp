@@ -31,8 +31,8 @@ void Window::createWindow() {
 
 void Window::onStart() {
   // Shaders
-  m_Shader.loadVertexShader("shaders/lightingShader.vert.spv");
-  m_Shader.loadFragmentShader("shaders/lightingShader.frag.spv");
+  m_Shader.loadVertexShader("assets/shaders/lightingShader.vert.spv");
+  m_Shader.loadFragmentShader("assets/shaders/lightingShader.frag.spv");
   m_GraphicsManager->addShader(&m_Shader);
 
   // Models

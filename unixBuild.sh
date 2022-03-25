@@ -2,5 +2,5 @@
 mkdir -p build
 cd build
 cmake -S ../ -B .
-make && make Shaders && ./ox3d
+make && make Shaders && ./bin/sandbox
 cd ..

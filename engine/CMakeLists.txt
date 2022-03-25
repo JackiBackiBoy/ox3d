@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -116,7 +116,7 @@ set_target_properties(engine PROPERTIES IMPORT_PREFIX "")
 target_compile_features(engine PUBLIC cxx_std_17)
 target_compile_definitions(engine PRIVATE
   OX_BUILD_LIB
-  ENGINE_DIR="../../"
+  ENGINE_DIR="${CMAKE_HOME_DIRECTORY}/"
 )
 
 if (WIN32)
@@ -145,6 +145,7 @@ elseif (APPLE)
     ${Vulkan_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIR}
+    ${STB_PATH}
   )
 
   target_link_directories(engine PUBLIC
@@ -153,6 +154,38 @@ elseif (APPLE)
 
   target_link_libraries(engine glfw ${Vulkan_LIBRARIES} ${ASSIMP_LIBRARIES} libfreetype.dylib)
 endif()
+
+# ------ Compiling shader files to SPIRV format ------
+find_program(GLSL_VALIDATOR glslangValidator HINTS 
+  ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE} 
+  /usr/bin 
+  /usr/local/bin 
+  ${VULKAN_SDK_PATH}/Bin
+  ${VULKAN_SDK_PATH}/Bin32
+  $ENV{VULKAN_SDK}/Bin/ 
+  $ENV{VULKAN_SDK}/Bin32/
+)
+
+# Retrieve all vertex and fragment shaders
+file (GLOB_RECURSE GLSL_SOURCE_FILES
+  "${CMAKE_HOME_DIRECTORY}/assets/shaders/*.vert"
+  "${CMAKE_HOME_DIRECTORY}/assets/shaders/*.frag"
+)
+
+foreach(GLSL ${GLSL_SOURCE_FILES})
+  get_filename_component(FILE_NAME ${GLSL} NAME)
+  set(SPIRV "${CMAKE_HOME_DIRECTORY}/assets/shaders/${FILE_NAME}.spv")
+  add_custom_command(
+    OUTPUT ${SPIRV}
+    COMMAND ${GLSL_VALIDATOR} -V ${GLSL} -o ${SPIRV}
+    DEPENDS ${GLSL})
+  list(APPEND SPIRV_BINARY_FILES ${SPIRV})
+endforeach(GLSL)
+
+add_custom_target(
+  Shaders
+  DEPENDS ${SPIRV_BINARY_FILES}
+)
 
 install(TARGETS engine
   LIBRARY DESTINATION ${CMAKE_BINARY_DIR}/lib
