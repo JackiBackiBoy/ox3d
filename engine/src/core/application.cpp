@@ -3,9 +3,14 @@
 #include <array>
 #include <iostream>
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
+
 namespace ox {
   Application::Application() {
-    loadModels();
+    loadEntities();
     createPipelineLayout();
     recreateSwapChain();
     createCommandBuffers();
@@ -86,7 +91,7 @@ namespace ox {
     }
   }
 
-  void Application::loadModels() {
+  void Application::loadEntities() {
     std::vector<Model::Vertex> vertices {
       //{ {  0.0f, -(sideLen * sin45) / 2.0f } },
       //{ {  sideLen / 2.0f,  (sideLen * sin45) / 2.0f } },
@@ -96,16 +101,30 @@ namespace ox {
     vertices = sierpinski(4, 1.0f, 0.0f, 0.0f);
     std::cout << vertices.size() << std::endl;
 
-    m_Model = std::make_unique<Model>(m_Device, vertices);
+    auto m_Model = std::make_shared<Model>(m_Device, vertices);
+    auto triangle = Entity::createEntity();
+    triangle.model = m_Model;
+    triangle.color = { 0.1f, 0.8f, 0.1f };
+    triangle.transform.translation.x = 0.2f;
+    triangle.transform.scale = { 2.0f, 0.5f };
+    triangle.transform.rotation = -glm::radians(45.0f);
+    
+    m_Entities.push_back(std::move(triangle));
   }
 
   void Application::createPipelineLayout() {
+    // Push constants
+    VkPushConstantRange pushConstantRange{};
+    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+    pushConstantRange.offset = 0;
+    pushConstantRange.size = sizeof(SimplePushConstantData);
+
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = 0;
     pipelineLayoutInfo.pSetLayouts = nullptr;
-    pipelineLayoutInfo.pushConstantRangeCount = 0;
-    pipelineLayoutInfo.pPushConstantRanges = nullptr;
+    pipelineLayoutInfo.pushConstantRangeCount = 1;
+    pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
     if (vkCreatePipelineLayout(
           m_Device.device(),
@@ -197,7 +216,7 @@ namespace ox {
     renderPassInfo.renderArea.extent = m_SwapChain->getSwapChainExtent();
 
     std::array<VkClearValue, 2> clearValues{};
-    clearValues[0].color = {0.1f, 0.1f, 0.1f, 1.0f};
+    clearValues[0].color = {0.01f, 0.01f, 0.01f, 1.0f};
     clearValues[1].depthStencil = {1.0f, 0};
     renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
     renderPassInfo.pClearValues = clearValues.data();
@@ -215,14 +234,34 @@ namespace ox {
     vkCmdSetViewport(m_CommandBuffers[imageIndex], 0, 1, &viewport);
     vkCmdSetScissor(m_CommandBuffers[imageIndex], 0, 1, &scissor);
 
-    m_Pipeline->bind(m_CommandBuffers[imageIndex]);
-    m_Model->bind(m_CommandBuffers[imageIndex]);
-    m_Model->draw(m_CommandBuffers[imageIndex]);
+    renderEntities(m_CommandBuffers[imageIndex]);
 
     vkCmdEndRenderPass(m_CommandBuffers[imageIndex]);
 
     if (vkEndCommandBuffer(m_CommandBuffers[imageIndex]) != VK_SUCCESS) {
       throw std::runtime_error("VULKAN ERROR: Failed to record command buffer!");
+    }
+  }
+
+  void Application::renderEntities(VkCommandBuffer commandBuffer) {
+    m_Pipeline->bind(commandBuffer);
+
+    for (auto& obj: m_Entities) {
+      SimplePushConstantData push{};
+      push.offset = obj.transform.translation;
+      push.color = obj.color;
+      push.transform = obj.transform.mat2();
+
+      vkCmdPushConstants(
+          commandBuffer,
+          m_PipelineLayout,
+          VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+          0,
+          sizeof(SimplePushConstantData),
+          &push);
+
+      obj.model->bind(commandBuffer);
+      obj.model->draw(commandBuffer);
     }
   }
 

@@ -2,7 +2,7 @@
 
 #include "core/core.hpp"
 #include "rendering/graphicsDevice.hpp"
-#include "rendering/model.hpp"
+#include "data/entity.hpp"
 #include "rendering/graphicsPipeline.hpp"
 #include "rendering/swapChain.hpp"
 #include "window.hpp"
@@ -11,6 +11,12 @@
 #include <vector>
 
 namespace ox {
+  struct OX_API SimplePushConstantData {
+    glm::mat2 transform{1.0f};
+    glm::vec2 offset;
+    alignas(16) glm::vec3 color;
+  };
+  
   class OX_API Application {
     public:
       int WIDTH = 720;
@@ -26,7 +32,7 @@ namespace ox {
       void run();
 
     private:
-      void loadModels();
+      void loadEntities();
       void createPipelineLayout();
       void createPipeline();
       void createCommandBuffers();
@@ -34,6 +40,7 @@ namespace ox {
       void drawFrame();
       void recreateSwapChain();
       void recordCommandBuffer(int imageIndex);
+      void renderEntities(VkCommandBuffer commandBuffer);
 
       Window m_Window{WIDTH, HEIGHT, "Vulkan Renderer"};
       GraphicsDevice m_Device{m_Window};
@@ -41,6 +48,6 @@ namespace ox {
       std::unique_ptr<GraphicsPipeline> m_Pipeline;
       VkPipelineLayout m_PipelineLayout;
       std::vector<VkCommandBuffer> m_CommandBuffers;
-      std::unique_ptr<Model> m_Model;
+      std::vector<Entity> m_Entities;
   };
 }
