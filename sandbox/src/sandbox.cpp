@@ -1,20 +1,10 @@
-#include "oxcart.h"
+#include "oxcart.hpp"
 
-class Sandbox : public ox::Window {
+class Sandbox : public ox::Application {
   public:
-    Sandbox() : ox::Window(1280, 720, "Oxcart Vulkan renderer") {};
-
-    void onStart() override {
-
-    }
-    void onUpdate(const float& deltaTime) override {
-
-    }
-    void onRender() override {
-
-    }
+    Sandbox() : Application::Application() {};
 };
 
-ox::Window* targetWindow() {
+ox::Application* targetApp() {
   return new Sandbox();
 }

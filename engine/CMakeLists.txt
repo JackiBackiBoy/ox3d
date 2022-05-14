@@ -103,7 +103,7 @@ endif()
 
 # Retrieve all source and header files
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_HOME_DIRECTORY}/engine/*.cpp)
-file(GLOB_RECURSE HEADER_FILES ${CMAKE_HOME_DIRECTORY}/engine/*.h)
+file(GLOB_RECURSE HEADER_FILES ${CMAKE_HOME_DIRECTORY}/engine/*.hpp)
 
 # Export dynamically linked library for the Oxcart engine
 add_library(engine SHARED ${SOURCE_FILES} ${HEADER_FILES})

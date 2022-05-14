@@ -18,7 +18,7 @@ include_directories(
 
 # Retrieve all source and header files
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_HOME_DIRECTORY}/sandbox/src/*.cpp)
-file(GLOB_RECURSE HEADER_FILES ${CMAKE_HOME_DIRECTORY}/sandbox/src/*.h)
+file(GLOB_RECURSE HEADER_FILES ${CMAKE_HOME_DIRECTORY}/sandbox/src/*.hpp)
 
 add_executable(sandbox ${SOURCE_FILES} ${HEADER_FILES})
 
