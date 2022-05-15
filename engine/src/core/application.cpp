@@ -37,86 +37,70 @@ namespace ox {
     vkDeviceWaitIdle(m_Device.device());
   }
 
-  float sin45 = sin(glm::radians(45.0f));
-  std::vector<Model::Vertex> sierpinski(
-      const int& iterations,
-      const float& sideLen,
-      const float& originX,
-      const float& originY) {
-    float height = sideLen * sin45;
+  std::unique_ptr<Model> createCubeModel(GraphicsDevice& device, glm::vec3 offset) {
+  std::vector<Model::Vertex> vertices{
+      // left face (white)
+      {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
+      {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
+      {{-.5f, -.5f, .5f}, {.9f, .9f, .9f}},
+      {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
+      {{-.5f, .5f, -.5f}, {.9f, .9f, .9f}},
+      {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
 
-    if (iterations == 0) {
-      // Create 3 new equilateral triangles
-      // Top triangle
-      glm::vec2 a1 = { originX, originY - height / 2.0f }; // top
-      glm::vec2 b1 = { originX + sideLen / 4.0f,  originY }; // bottom right
-      glm::vec2 c1 = { originX - sideLen / 4.0f,  originY }; // bottom left
+      // right face (yellow)
+      {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
+      {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+      {{.5f, -.5f, .5f}, {.8f, .8f, .1f}},
+      {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
+      {{.5f, .5f, -.5f}, {.8f, .8f, .1f}},
+      {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
 
-      // Bottom right triangle
-      glm::vec2 a2 = { originX + sideLen / 4.0f, originY }; // top
-      glm::vec2 b2 = { originX + sideLen / 2.0f, originY + height / 2.0f }; // bottom right
-      glm::vec2 c2 = { originX, originY + height / 2.0f }; // bottom left
+      // top face (orange, remember y axis points down)
+      {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+      {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+      {{-.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+      {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+      {{.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+      {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
 
-      // Bottom left triangle
-      glm::vec2 a3 = { originX - sideLen / 4.0f, originY }; // top
-      glm::vec2 b3 = { originX, originY + height / 2.0f }; // bottom right
-      glm::vec2 c3 = { originX - sideLen / 2.0f, originY + height / 2.0f }; // bottom left
+      // bottom face (red)
+      {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+      {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+      {{-.5f, .5f, .5f}, {.8f, .1f, .1f}},
+      {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+      {{.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+      {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
 
-      std::vector<Model::Vertex> newVertices;
-      newVertices.push_back({ a1, { 1.0f, 0.0f, 0.0f } });
-      newVertices.push_back({ b1, { 1.0f, 0.0f, 0.0f } });
-      newVertices.push_back({ c1, { 1.0f, 0.0f, 0.0f } });
+      // nose face (blue)
+      {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+      {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+      {{-.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+      {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+      {{.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+      {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
 
-      newVertices.push_back({ a2, { 1.0f, 0.0f, 0.0f } });
-      newVertices.push_back({ b2, { 1.0f, 0.0f, 0.0f } });
-      newVertices.push_back({ c2, { 1.0f, 0.0f, 0.0f } });
+      // tail face (green)
+      {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+      {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+      {{-.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+      {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+      {{.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+      {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+    };
 
-      newVertices.push_back({ a3, { 1.0f, 0.0f, 0.0f } });
-      newVertices.push_back({ b3, { 1.0f, 0.0f, 0.0f } });
-      newVertices.push_back({ c3, { 1.0f, 0.0f, 0.0f } });
-
-      return newVertices;
+    for (auto& v : vertices) {
+      v.position += offset;
     }
-    else {
-      auto topVertices = sierpinski(iterations - 1, sideLen / 2.0f, originX, originY - height / 4.0f); // top
-      auto bottomRightVertices = sierpinski(iterations - 1, sideLen / 2.0f, originX + sideLen / 4.0f, originY + height / 4.0f); // bottom right
-      auto bottomLeftVertices = sierpinski(iterations - 1, sideLen / 2.0f, originX - sideLen / 4.0f, originY + height / 4.0f); // bottom left
-
-
-      std::vector<Model::Vertex> newVertices;
-      for (auto t : topVertices) {
-        newVertices.push_back(t);
-      }
-
-      for (auto br : bottomRightVertices) {
-        newVertices.push_back(br);
-      }
-      for (auto bl : bottomLeftVertices) {
-        newVertices.push_back(bl);
-      }
-
-      return newVertices;
-    }
+    return std::make_unique<Model>(device, vertices);
   }
 
   void Application::loadEntities() {
-    std::vector<Model::Vertex> vertices {
-      //{ {  0.0f, -(sideLen * sin45) / 2.0f } },
-      //{ {  sideLen / 2.0f,  (sideLen * sin45) / 2.0f } },
-      //{ { -sideLen / 2.0f,  (sideLen * sin45) / 2.0f } }
-    };
+    std::shared_ptr<Model> model = createCubeModel(m_Device, { 0.0f, 0.0f, 0.0f });
 
-    vertices = sierpinski(4, 1.0f, 0.0f, 0.0f);
-    std::cout << vertices.size() << std::endl;
-
-    auto m_Model = std::make_shared<Model>(m_Device, vertices);
-    auto triangle = Entity::createEntity();
-    triangle.model = m_Model;
-    triangle.color = { 0.1f, 0.8f, 0.1f };
-    triangle.transform.translation.x = 0.2f;
-    triangle.transform.scale = { 2.0f, 0.5f };
-    triangle.transform.rotation = -glm::radians(45.0f);
-    
-    m_Entities.push_back(std::move(triangle));
+    auto cube = Entity::createEntity();
+    cube.model = model;
+    cube.transform.translation = { 0.0f, 0.0f, 0.5f };
+    cube.transform.scale = { 0.5f, 0.5f, 0.5f };
+    m_Entities.push_back(std::move(cube));
   }
 }

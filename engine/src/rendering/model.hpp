@@ -13,7 +13,7 @@ namespace ox {
   class OX_API Model {
     public:
       struct OX_API Vertex {
-        glm::vec2 position;
+        glm::vec3 position;
         glm::vec3 color;
 
         static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();

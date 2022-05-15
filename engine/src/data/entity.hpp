@@ -2,22 +2,27 @@
 
 #include "core/core.hpp"
 #include "rendering/model.hpp"
+
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <memory>
 
 namespace ox {
   struct OX_API Transform {
-    glm::vec2 translation{};
-    glm::vec2 scale{1.0f, 1.0f};
-    float rotation = 0.0f;
+    glm::vec3 translation{};
+    glm::vec3 scale{1.0f, 1.0f, 1.0f};
+    glm::vec3 rotation{};
 
-    glm::mat2 mat2() {
-      const float s = glm::sin(rotation);
-      const float c = glm::cos(rotation);
+    glm::mat4 mat4() {
+      auto transform = glm::translate(glm::mat4{1.0f}, translation);
 
-      glm::mat2 rotMat{ { c, s }, { -s, c } };
-      glm::mat2 scaleMat{ {scale.x, 0.0f }, { 0.0f, scale.y } };
+      transform = glm::rotate(transform, rotation.y, { 0.0f, 1.0f, 0.0f }); // yaw
+      transform = glm::rotate(transform, rotation.x, { 1.0f, 0.0f, 0.0f }); // pitch
+      transform = glm::rotate(transform, rotation.z, { 0.0f, 0.0f, 1.0f }); // roll
 
-      return rotMat * scaleMat;
+      transform = glm::scale(transform, scale);
+
+      return transform;
     }
   };
 
