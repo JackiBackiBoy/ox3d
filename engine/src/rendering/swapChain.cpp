@@ -130,6 +130,11 @@ namespace ox {
     return result;
   }
 
+  bool SwapChain::compareSwapFormats(const SwapChain& swapChain) const {
+    return swapChain.swapChainDepthFormat == swapChainDepthFormat &&
+           swapChain.swapChainImageFormat == swapChainImageFormat;
+  }
+
   void SwapChain::createSwapChain() {
     SwapChainSupportDetails swapChainSupport = device.getSwapChainSupport();
 
@@ -300,6 +305,7 @@ namespace ox {
 
   void SwapChain::createDepthResources() {
     VkFormat depthFormat = findDepthFormat();
+    swapChainDepthFormat = depthFormat;
     VkExtent2D swapChainExtent = getSwapChainExtent();
 
     depthImages.resize(imageCount());

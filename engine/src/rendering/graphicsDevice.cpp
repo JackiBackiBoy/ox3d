@@ -130,7 +130,7 @@ void GraphicsDevice::pickPhysicalDevice() {
   }
 
   vkGetPhysicalDeviceProperties(physicalDevice, &properties);
-  std::cout << "physical device: " << properties.deviceName << std::endl;
+  std::cout << "Physical device (GPU): " << properties.deviceName << std::endl;
 }
 
 void GraphicsDevice::createLogicalDevice() {

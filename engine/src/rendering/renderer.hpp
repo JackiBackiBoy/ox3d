@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+#include <cassert>
 
 namespace ox {
   class OX_API Renderer {
@@ -18,8 +19,10 @@ namespace ox {
       Renderer(const Renderer&) = delete;
       Renderer& operator=(const Renderer&) = delete;
 
+      inline VkRenderPass getSwapChainRenderPass() const { return m_SwapChain->getRenderPass(); }
       inline bool isFrameInProgress() const { return m_IsFrameStarted; }
-      VkCommandBuffer getCurrentCommandBuffer() const { return m_CommandBuffers[m_CurrentImageIndex]; }
+      VkCommandBuffer getCurrentCommandBuffer() const;
+      int getFrameIndex() const;
 
       VkCommandBuffer beginFrame();
       void endFrame();
@@ -34,7 +37,8 @@ namespace ox {
       GraphicsDevice& m_Device;
       std::unique_ptr<SwapChain> m_SwapChain;
       std::vector<VkCommandBuffer> m_CommandBuffers;
-      uint32_t m_CurrentImageIndex;
-      bool m_IsFrameStarted;
+      uint32_t m_CurrentImageIndex{0};
+      int m_CurrentFrameIndex;
+      bool m_IsFrameStarted{false};
   };
 }

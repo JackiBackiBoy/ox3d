@@ -1,29 +1,37 @@
 #include "application.hpp"
-#include <stdexcept>
-#include <array>
-#include <iostream>
+#include "rendering/renderSystem.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 
+#include <stdexcept>
+#include <array>
+#include <iostream>
+
 namespace ox {
   Application::Application() {
     loadEntities();
-    createPipelineLayout();
-    recreateSwapChain();
-    createCommandBuffers();
   }
 
   Application::~Application() {
-    vkDestroyPipelineLayout(m_Device.device(), m_PipelineLayout, nullptr);
   }
 
   void Application::run() {
+    RenderSystem renderSystem{m_Device, m_Renderer.getSwapChainRenderPass()};
+
     while (!m_Window.shouldClose()) {
       glfwPollEvents();
-      drawFrame();
+
+      if (auto commandBuffer = m_Renderer.beginFrame()) {
+        // TODO: begin other render passes
+
+        m_Renderer.beginSwapChainRenderPass(commandBuffer);
+        renderSystem.renderEntities(commandBuffer, m_Entities);
+        m_Renderer.endSwapChainRenderPass(commandBuffer);
+        m_Renderer.endFrame();
+      }
     }
 
     vkDeviceWaitIdle(m_Device.device());
@@ -110,186 +118,5 @@ namespace ox {
     triangle.transform.rotation = -glm::radians(45.0f);
     
     m_Entities.push_back(std::move(triangle));
-  }
-
-  void Application::createPipelineLayout() {
-    // Push constants
-    VkPushConstantRange pushConstantRange{};
-    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-    pushConstantRange.offset = 0;
-    pushConstantRange.size = sizeof(SimplePushConstantData);
-
-    VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-    pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo.setLayoutCount = 0;
-    pipelineLayoutInfo.pSetLayouts = nullptr;
-    pipelineLayoutInfo.pushConstantRangeCount = 1;
-    pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
-
-    if (vkCreatePipelineLayout(
-          m_Device.device(),
-          &pipelineLayoutInfo,
-          nullptr,
-          &m_PipelineLayout) != VK_SUCCESS) {
-      throw std::runtime_error("VULKAN ERROR: Failed to create pipeline layout!");
-    }
-  }
-
-  void Application::createPipeline() {
-    assert(m_SwapChain != nullptr && "VULKAN ASSERTION FAILED: Cannot create pipeline before swap chain!");
-    assert(m_PipelineLayout != nullptr && "VULKAN ASSERTION FAILED: Cannot create pipeline before pipeline layout!");
-
-    PipelineConfigInfo pipelineConfig{};
-    GraphicsPipeline::defaultPipelineConfigInfo(pipelineConfig);
-    pipelineConfig.renderPass = m_SwapChain->getRenderPass();
-    pipelineConfig.pipelineLayout = m_PipelineLayout;
-    m_Pipeline = std::make_unique<GraphicsPipeline>(
-        m_Device,
-        "assets/shaders/lightingShader.vert.spv",
-        "assets/shaders/lightingShader.frag.spv",
-        pipelineConfig);
-  }
-
-  void Application::recreateSwapChain() {
-    auto extent = m_Window.getExtent();
-
-    while (extent.width == 0 || extent.height == 0) {
-      extent = m_Window.getExtent();
-      glfwWaitEvents();
-    }
-
-    vkDeviceWaitIdle(m_Device.device());
-
-    if (m_SwapChain == nullptr) {
-      m_SwapChain = std::make_unique<SwapChain>(m_Device, extent);
-    }
-    else {
-      m_SwapChain = std::make_unique<SwapChain>(m_Device, extent, std::move(m_SwapChain));
-
-      if (m_SwapChain->imageCount() != m_CommandBuffers.size()) {
-        freeCommandBuffers();
-        createCommandBuffers();
-      }
-    }
-
-    // TODO: if render pass is compatible, then do nothing
-    createPipeline();
-  }
-
-  void Application::createCommandBuffers() {
-    m_CommandBuffers.resize(m_SwapChain->imageCount());
-
-    VkCommandBufferAllocateInfo allocInfo{};
-    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandPool = m_Device.getCommandPool();
-    allocInfo.commandBufferCount = static_cast<uint32_t>(m_CommandBuffers.size());
-
-    if (vkAllocateCommandBuffers(m_Device.device(), &allocInfo, m_CommandBuffers.data()) !=
-        VK_SUCCESS) {
-      throw std::runtime_error("VULKAN ERROR: Failed to allocate command buffers!");
-    }
-  }
-
-  void Application::freeCommandBuffers() {
-    vkFreeCommandBuffers(
-        m_Device.device(),
-        m_Device.getCommandPool(),
-        static_cast<uint32_t>(m_CommandBuffers.size()),
-        m_CommandBuffers.data());
-    m_CommandBuffers.clear();
-  }
-
-  void Application::recordCommandBuffer(int imageIndex) {
-    VkCommandBufferBeginInfo beginInfo{};
-    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-    if (vkBeginCommandBuffer(m_CommandBuffers[imageIndex], &beginInfo) != VK_SUCCESS) {
-      throw std::runtime_error("VULKAN ERROR: Failed to begin recording command buffer!");
-    }
-
-    VkRenderPassBeginInfo renderPassInfo{};
-    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = m_SwapChain->getRenderPass();
-    renderPassInfo.framebuffer = m_SwapChain->getFrameBuffer(imageIndex);
-    renderPassInfo.renderArea.offset = {0, 0};
-    renderPassInfo.renderArea.extent = m_SwapChain->getSwapChainExtent();
-
-    std::array<VkClearValue, 2> clearValues{};
-    clearValues[0].color = {0.01f, 0.01f, 0.01f, 1.0f};
-    clearValues[1].depthStencil = {1.0f, 0};
-    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-    renderPassInfo.pClearValues = clearValues.data();
-
-    vkCmdBeginRenderPass(m_CommandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-    VkViewport viewport{};
-    viewport.x = 0.0f;
-    viewport.y = 0.0f;
-    viewport.width = static_cast<float>(m_SwapChain->getSwapChainExtent().width);
-    viewport.height = static_cast<float>(m_SwapChain->getSwapChainExtent().height);
-    viewport.minDepth = 0.0f;
-    viewport.maxDepth = 1.0f;
-    VkRect2D scissor{{0, 0}, m_SwapChain->getSwapChainExtent()};
-    vkCmdSetViewport(m_CommandBuffers[imageIndex], 0, 1, &viewport);
-    vkCmdSetScissor(m_CommandBuffers[imageIndex], 0, 1, &scissor);
-
-    renderEntities(m_CommandBuffers[imageIndex]);
-
-    vkCmdEndRenderPass(m_CommandBuffers[imageIndex]);
-
-    if (vkEndCommandBuffer(m_CommandBuffers[imageIndex]) != VK_SUCCESS) {
-      throw std::runtime_error("VULKAN ERROR: Failed to record command buffer!");
-    }
-  }
-
-  void Application::renderEntities(VkCommandBuffer commandBuffer) {
-    m_Pipeline->bind(commandBuffer);
-
-    for (auto& obj: m_Entities) {
-      SimplePushConstantData push{};
-      push.offset = obj.transform.translation;
-      push.color = obj.color;
-      push.transform = obj.transform.mat2();
-
-      vkCmdPushConstants(
-          commandBuffer,
-          m_PipelineLayout,
-          VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-          0,
-          sizeof(SimplePushConstantData),
-          &push);
-
-      obj.model->bind(commandBuffer);
-      obj.model->draw(commandBuffer);
-    }
-  }
-
-  void Application::drawFrame() {
-    uint32_t imageIndex;
-    auto result = m_SwapChain->acquireNextImage(&imageIndex);
-
-    if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-      recreateSwapChain();
-      return;
-    }
-
-    if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-      throw std::runtime_error("VULKAN ERROR: Failed to acquire swap chain image!");
-    }
-
-    recordCommandBuffer(imageIndex);
-    result = m_SwapChain->submitCommandBuffers(&m_CommandBuffers[imageIndex], &imageIndex);
-
-    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR ||
-        m_Window.wasWindowResized()) {
-      m_Window.resetWindowResizedFlag();
-      recreateSwapChain();
-      return;
-    }
-
-    if (result != VK_SUCCESS) {
-      throw std::runtime_error("VULKAN ERROR: Failed to present swap chain image!");
-    }
   }
 }
