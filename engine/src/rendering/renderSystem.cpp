@@ -56,14 +56,17 @@ namespace ox {
         pipelineConfig);
   }
 
-  void RenderSystem::renderEntities(VkCommandBuffer commandBuffer, std::vector<Entity>& entities) {
+  void RenderSystem::renderEntities(
+      VkCommandBuffer commandBuffer,
+      std::vector<Entity>& entities,
+      const Camera& camera) {
     m_Pipeline->bind(commandBuffer);
 
-    for (auto& obj: entities) {
-      obj.transform.rotation.y = glm::mod(obj.transform.rotation.y + 0.01f, glm::two_pi<float>());
+    auto projectionView = camera.getProjection() * camera.getView();
 
+    for (auto& obj: entities) {
       SimplePushConstantData push{};
-      push.transform = obj.transform.mat4();
+      push.transform = projectionView * obj.transform.mat4();
       push.color = obj.color;
 
       vkCmdPushConstants(

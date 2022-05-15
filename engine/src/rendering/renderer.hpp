@@ -20,6 +20,7 @@ namespace ox {
       Renderer& operator=(const Renderer&) = delete;
 
       inline VkRenderPass getSwapChainRenderPass() const { return m_SwapChain->getRenderPass(); }
+      inline float getAspectRatio() const { return m_SwapChain->extentAspectRatio(); }
       inline bool isFrameInProgress() const { return m_IsFrameStarted; }
       VkCommandBuffer getCurrentCommandBuffer() const;
       int getFrameIndex() const;

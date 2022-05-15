@@ -19,6 +19,7 @@ namespace ox {
       VkExtent2D getExtent();
       inline bool wasWindowResized() { return m_FramebufferResized; }
       inline void resetWindowResizedFlag() { m_FramebufferResized = false; }
+      inline GLFWwindow* const getRawWindow() { return m_RawWindow; }
       void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
     private:

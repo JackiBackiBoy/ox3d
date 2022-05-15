@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/core.hpp"
+#include "components/camera.hpp"
 #include "rendering/graphicsDevice.hpp"
 #include "data/entity.hpp"
 #include "rendering/graphicsPipeline.hpp"
@@ -23,7 +24,10 @@ namespace ox {
       RenderSystem(const RenderSystem&) = delete;
       RenderSystem& operator=(const RenderSystem&) = delete;
 
-      void renderEntities(VkCommandBuffer commandBuffer, std::vector<Entity>& entities);
+      void renderEntities(
+          VkCommandBuffer commandBuffer,
+          std::vector<Entity>& entities,
+          const Camera& camera);
     private:
       void createPipelineLayout();
       void createPipeline(VkRenderPass renderPass);
