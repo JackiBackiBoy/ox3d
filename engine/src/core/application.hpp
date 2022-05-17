@@ -22,7 +22,14 @@ namespace ox {
       Application(const Application&) = delete;
       Application& operator=(const Application&) = delete;
 
+      virtual void onStart();
+      virtual void onUpdate(const float& dt);
+      virtual void onRender();
+
       void run();
+
+    protected:
+      std::vector<Entity> m_Entities;
 
     private:
       void loadEntities();
@@ -30,6 +37,6 @@ namespace ox {
       Window m_Window{WIDTH, HEIGHT, "Vulkan Renderer"};
       GraphicsDevice m_Device{m_Window};
       Renderer m_Renderer{m_Window, m_Device};
-      std::vector<Entity> m_Entities;
+      glm::vec2 lastMousePos;
   };
 }

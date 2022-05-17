@@ -1,12 +1,14 @@
 #include "renderSystem.hpp"
-#include <stdexcept>
-#include <array>
-#include <iostream>
+#include "components/transform.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
+
+#include <stdexcept>
+#include <array>
+#include <iostream>
 
 namespace ox {
   RenderSystem::RenderSystem(GraphicsDevice& device, VkRenderPass renderPass)
@@ -65,8 +67,11 @@ namespace ox {
     auto projectionView = camera.getProjection() * camera.getView();
 
     for (auto& obj: entities) {
+      glm::mat4 modelMatrix = glm::mat4(1.0f);
+      modelMatrix = glm::translate(modelMatrix, obj.getComponent<Transform>()->position);
+
       SimplePushConstantData push{};
-      push.transform = projectionView * obj.transform.mat4();
+      push.transform = projectionView * modelMatrix;
       push.color = obj.color;
 
       vkCmdPushConstants(

@@ -1,6 +1,7 @@
 #include "window.hpp"
 #include <iostream>
 #include <vector>
+#include "input/mouse.hpp"
 
 using namespace ox;
 
@@ -22,6 +23,9 @@ void Window::createWindow() {
   m_RawWindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
   glfwSetWindowUserPointer(m_RawWindow, this);
   glfwSetFramebufferSizeCallback(m_RawWindow, framebufferResizeCallback);
+  glfwSetInputMode(m_RawWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetCursorPosCallback(m_RawWindow, Mouse::onMouseMove);
+
 }
 
 void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) {

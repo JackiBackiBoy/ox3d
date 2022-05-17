@@ -3,7 +3,7 @@
 #include "core/core.hpp"
 
 namespace ox {
-  enum class OX_API Keycode {
+  enum class Keycode {
     Unknown = -1,
 
     // Printable keys
