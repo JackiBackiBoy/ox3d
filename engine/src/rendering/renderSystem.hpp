@@ -12,7 +12,7 @@
 namespace ox {
   struct OX_API SimplePushConstantData {
     glm::mat4 transform{1.0f};
-    alignas(16) glm::vec3 color;
+    glm::mat4 modelMatrix{1.0f};
   };
   
   class OX_API RenderSystem {

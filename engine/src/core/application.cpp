@@ -64,7 +64,7 @@ namespace ox {
 
       float aspect = m_Renderer.getAspectRatio();
       // Perspective matrix
-      playerCamera->setPerspective(80.0f, aspect, 0.1f, 10.0f);
+      playerCamera->setPerspective(glm::radians(80.0f), aspect, 0.1f, 100.0f);
 
 
       // ------ Camera movement ------
@@ -98,26 +98,26 @@ namespace ox {
 
       // Horizontal movement (X-axis)
       if (Keyboard::isKeyDown(Keycode::A, m_Window)) { // left
-        playerTransform->position -= camRight * 10.0f * dt;
+        playerTransform->position -= camRight * 2.0f * dt;
       }
       if (Keyboard::isKeyDown(Keycode::D, m_Window)) { // right
-        playerTransform->position += camRight * 10.0f * dt;
+        playerTransform->position += camRight * 2.0f * dt;
       }
 
       // Vertical movement (Y-axis)
       if (Keyboard::isKeyDown(Keycode::Space, m_Window)) { // up
-        playerTransform->position.y += 10.0f * dt;
+        playerTransform->position.y += 2.0f * dt;
       }
       if (Keyboard::isKeyDown(Keycode::LeftControl, m_Window)) { // down
-        playerTransform->position.y -= 10.0f * dt;
+        playerTransform->position.y -= 2.0f * dt;
       }
 
       // Forward and backward movement (Z-axis)
       if (Keyboard::isKeyDown(Keycode::W, m_Window)) { // forward
-        playerTransform->position += newForward * 10.0f * dt;
+        playerTransform->position += newForward * 2.0f * dt;
       }
       if (Keyboard::isKeyDown(Keycode::S, m_Window)) { // backward
-        playerTransform->position -= newForward * 10.0f * dt;
+        playerTransform->position -= newForward * 2.0f * dt;
       }
 
       if (auto commandBuffer = m_Renderer.beginFrame()) {
@@ -133,65 +133,8 @@ namespace ox {
     vkDeviceWaitIdle(m_Device.device());
   }
 
-  std::unique_ptr<Model> createCubeModel(GraphicsDevice& device, glm::vec3 offset) {
-  std::vector<Model::Vertex> vertices{
-      // left face (white)
-      {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
-      {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
-      {{-.5f, -.5f, .5f}, {.9f, .9f, .9f}},
-      {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
-      {{-.5f, .5f, -.5f}, {.9f, .9f, .9f}},
-      {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
-
-      // right face (yellow)
-      {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
-      {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
-      {{.5f, -.5f, .5f}, {.8f, .8f, .1f}},
-      {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
-      {{.5f, .5f, -.5f}, {.8f, .8f, .1f}},
-      {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
-
-      // top face (orange, remember y axis points down)
-      {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
-      {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
-      {{-.5f, -.5f, .5f}, {.9f, .6f, .1f}},
-      {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
-      {{.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
-      {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
-
-      // bottom face (red)
-      {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
-      {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
-      {{-.5f, .5f, .5f}, {.8f, .1f, .1f}},
-      {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
-      {{.5f, .5f, -.5f}, {.8f, .1f, .1f}},
-      {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
-
-      // nose face (blue)
-      {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
-      {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
-      {{-.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
-      {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
-      {{.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
-      {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
-
-      // tail face (green)
-      {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
-      {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
-      {{-.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
-      {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
-      {{.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
-      {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
-    };
-
-    for (auto& v : vertices) {
-      v.position += offset;
-    }
-    return std::make_unique<Model>(device, vertices);
-  }
-
   void Application::loadEntities() {
-    std::shared_ptr<Model> model = createCubeModel(m_Device, { 0.0f, 0.0f, 0.0f });
+    std::shared_ptr model = std::make_unique<Model>(m_Device, "assets/models/waterbottle/WaterBottle.gltf");
 
     auto cube = Entity::createEntity();
     cube.model = model;

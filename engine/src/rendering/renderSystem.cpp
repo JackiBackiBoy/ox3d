@@ -72,7 +72,7 @@ namespace ox {
 
       SimplePushConstantData push{};
       push.transform = projectionView * modelMatrix;
-      push.color = obj.color;
+      push.modelMatrix = modelMatrix;
 
       vkCmdPushConstants(
           commandBuffer,

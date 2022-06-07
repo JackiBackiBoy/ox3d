@@ -33,9 +33,9 @@ namespace ox {
       inline float getRoll() const { return m_Roll; }
 
       // Setters
-      inline void setYaw(const float& yaw) { m_Yaw = yaw; }
-      inline void setPitch(const float& pitch) { m_Pitch = pitch; }
-      inline void setRoll(const float& roll) { m_Roll = roll; }
+      void setYaw(const float& yaw);
+      void setPitch(const float& pitch);
+      void setRoll(const float& roll);
 
       glm::vec3 rotation{};
       glm::mat4 m_ProjectionMatrix{1.0f};
