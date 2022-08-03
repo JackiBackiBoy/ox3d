@@ -1,0 +1,39 @@
+#pragma once
+
+#include "oxcart/core/core.hpp"
+#include "oxcart/components/camera.hpp"
+#include "oxcart/rendering/graphicsDevice.hpp"
+#include "oxcart/data/entity.hpp"
+#include "oxcart/rendering/graphicsPipeline.hpp"
+
+#include <memory>
+#include <vector>
+
+namespace ox {
+  struct OX_API SimplePushConstantData {
+    glm::mat4 transform{1.0f};
+    glm::mat4 modelMatrix{1.0f};
+  };
+  
+  class OX_API RenderSystem {
+    public:
+      RenderSystem(GraphicsDevice& device, VkRenderPass renderPass);
+      ~RenderSystem();
+
+      // Delete copy constructors
+      RenderSystem(const RenderSystem&) = delete;
+      RenderSystem& operator=(const RenderSystem&) = delete;
+
+      void renderEntities(
+          VkCommandBuffer commandBuffer,
+          std::vector<Entity>& entities,
+          const Camera& camera);
+    private:
+      void createPipelineLayout();
+      void createPipeline(VkRenderPass renderPass);
+
+      GraphicsDevice& m_Device;
+      std::unique_ptr<GraphicsPipeline> m_Pipeline;
+      VkPipelineLayout m_PipelineLayout;
+  };
+}
