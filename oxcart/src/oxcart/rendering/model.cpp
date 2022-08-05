@@ -168,7 +168,7 @@ namespace ox {
       m_Vertices.push_back(
           { glm::vec3(position.x, position.y, position.z),
             glm::vec3(normal.x, normal.y, normal.z),
-            glm::vec3(1.0f, 1.0f, 1.0f) });
+            glm::vec3(1.0f, 0.0f, 0.0f) });
     }
 
     std::cout << "Normal count: " << m_Normals.size() << "\n";

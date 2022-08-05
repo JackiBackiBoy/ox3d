@@ -12,8 +12,8 @@
 namespace ox {
   class OX_API Application {
     public:
-      int WIDTH = 720;
-      int HEIGHT = 720;
+      int WIDTH = 1920;
+      int HEIGHT = 1080;
 
       Application();
       ~Application();
@@ -30,13 +30,12 @@ namespace ox {
 
     protected:
       std::vector<Entity> m_Entities;
-
-    private:
-      void loadEntities();
-
       Window m_Window{WIDTH, HEIGHT, "Vulkan Renderer"};
       GraphicsDevice m_Device{m_Window};
+
+    private:
       Renderer m_Renderer{m_Window, m_Device};
       glm::vec2 lastMousePos;
+      float lastAspectRatio = 0;
   };
 }

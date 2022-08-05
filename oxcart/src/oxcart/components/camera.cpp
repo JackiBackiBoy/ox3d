@@ -4,6 +4,8 @@
 #include <limits>
 
 namespace ox {
+  Camera::Camera() : Component() {}
+
   void Camera::setPerspective(
       const float& fov,
       const float& aspect,
@@ -23,4 +25,6 @@ namespace ox {
   void Camera::setRoll(const float& roll) {
     m_Roll = glm::mod(roll, glm::two_pi<float>());
   }
+
+  Camera* Camera::current = nullptr;
 }

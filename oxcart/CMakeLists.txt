@@ -18,6 +18,7 @@ if (WIN32)
   set(GLM_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/GLM)
   set(ASSIMP_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/assimp/windows)
   set(FREETYPE_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/freetype/windows)
+  set(IMGUI_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/imgui/)
 elseif(APPLE)
   set(FREETYPE_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/freetype/macOS)
 endif()
@@ -126,6 +127,7 @@ if (WIN32)
     ${Vulkan_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIR}
+    ${IMGUI_PATH}
     ${GLM_PATH}/include
     ${STB_PATH}
   )

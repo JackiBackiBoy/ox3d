@@ -28,7 +28,7 @@ namespace ox {
       virtual void onUpdate(const float& deltaTime) {};
 
       template <class T>
-      void addComponent() {
+      T* addComponent() {
         auto result = m_Components.find(std::type_index(typeid(T)));
 
         // if the component type is not already in m_Components, add it
@@ -40,10 +40,11 @@ namespace ox {
           auto entity = static_cast<T*>(m_Components.find(std::type_index(typeid(T)))->second);
           entity->bindToEntity(this);
 
-          return;
+          return entity;
         }
 
         std::cout << "Component already added!" << "\n";
+        return nullptr;
       }
 
       template <class T>

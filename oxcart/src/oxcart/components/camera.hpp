@@ -11,7 +11,7 @@
 namespace ox {
   class OX_API Camera : public Component {
     public:
-      Camera() : Component() {};
+      Camera();
 
       void onStart() override {};
       void onUpdate(const float& deltaTime) override {};
@@ -40,6 +40,8 @@ namespace ox {
       glm::vec3 rotation{};
       glm::mat4 m_ProjectionMatrix{1.0f};
       glm::mat4 m_ViewMatrix{1.0f};
+
+      static Camera* current;
 
     private:
       glm::vec3 m_Forward{0.0f, 0.0f, 1.0f};
