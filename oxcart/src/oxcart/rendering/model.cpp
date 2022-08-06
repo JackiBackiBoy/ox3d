@@ -5,6 +5,7 @@
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include "stb_image.h"
 
 namespace ox {
   Model::Model(GraphicsDevice& device, const std::vector<Vertex>& vertices)
@@ -18,52 +19,88 @@ namespace ox {
       loadFromFile(path);
       createVertexBuffers(m_Vertices);
       createIndexBuffers(m_Indices);
+      createTextures();
   }
 
   Model::~Model() {
-    // Destroy vertex buffer
-    vkDestroyBuffer(m_Device.device(), m_VertexBuffer, nullptr);
-    vkFreeMemory(m_Device.device(), m_VertexBufferMemory, nullptr);
+    // Destroy texture images and views
+    vkDestroyImageView(m_Device.device(), m_TextureImageView, nullptr);
+    vkDestroyImage(m_Device.device(), m_TextureImage, nullptr);
+    vkFreeMemory(m_Device.device(), m_TextureImageMemory, nullptr);
+  }
 
-    // Destroy index buffer (if necessary)
-    if (m_HasIndexBuffer) {
-      vkDestroyBuffer(m_Device.device(), m_IndexBuffer, nullptr);
-      vkFreeMemory(m_Device.device(), m_IndexBufferMemory, nullptr);
+  void Model::createTextures() {
+    // Texture image creation
+    int texWidth, texHeight, texChannels;
+    stbi_uc* pixels = stbi_load("../../assets/models/waterbottle/WaterBottle_baseColor.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+    VkDeviceSize imageSize = texWidth * texHeight * 4;
+
+    if (!pixels) {
+      throw std::runtime_error("VULKAN ERROR: Failed to load texture image!");
     }
+
+    VkBuffer stagingBuffer;
+    VkDeviceMemory stagingBufferMemory;
+    m_Device.createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+        stagingBuffer, stagingBufferMemory);
+
+    void* data;
+    vkMapMemory(m_Device.device(), stagingBufferMemory, 0, imageSize, 0, &data);
+    memcpy(data, pixels, static_cast<size_t>(imageSize));
+    vkUnmapMemory(m_Device.device(), stagingBufferMemory);
+
+    stbi_image_free(pixels);
+
+    m_Device.createImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB,
+        VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_TextureImage, m_TextureImageMemory);
+
+    m_Device.transitionImageLayout(m_TextureImage, VK_FORMAT_R8G8B8A8_SRGB,
+        VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+    m_Device.copyBufferToImage(stagingBuffer, m_TextureImage, texWidth, texHeight, 1);
+
+    m_Device.transitionImageLayout(m_TextureImage, VK_FORMAT_R8G8B8A8_SRGB,
+        VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+    vkDestroyBuffer(m_Device.device(), stagingBuffer, nullptr);
+    vkFreeMemory(m_Device.device(), stagingBufferMemory, nullptr);
+
+    // Texture image view creation
+    m_TextureImageView = m_Device.createImageView(m_TextureImage, VK_FORMAT_R8G8B8A8_SRGB);
+
+    // Texture sampler creation
+
   }
 
   void Model::createVertexBuffers(const std::vector<Vertex>& vertices) {
     m_VertexCount = static_cast<uint32_t>(vertices.size());
     assert(m_VertexCount >= 3 && "VULKAN ASSERTION FAILED: Vertex count must be >= 3");
     VkDeviceSize bufferSize = sizeof(vertices[0]) * m_VertexCount;
+    uint32_t vertexSize = sizeof(vertices[0]);
 
-    VkBuffer stagingBuffer;
-    VkDeviceMemory stagingBufferMemory;
+    Buffer stagingBuffer {
+      m_Device,
+      vertexSize,
+      m_VertexCount,
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+    };
 
-    m_Device.createBuffer(
-        bufferSize,
-        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-        stagingBuffer,
-        stagingBufferMemory);
+    stagingBuffer.map();
+    stagingBuffer.writeToBuffer((void*)vertices.data());
 
-    void* data;
-    vkMapMemory(m_Device.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-    memcpy(data, vertices.data(), static_cast<size_t>(bufferSize));
-    vkUnmapMemory(m_Device.device(), stagingBufferMemory);
-
-    m_Device.createBuffer(
-        bufferSize,
+    m_VertexBuffer = std::make_unique<Buffer>(
+        m_Device,
+        vertexSize,
+        m_VertexCount,
         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        m_VertexBuffer,
-        m_VertexBufferMemory);
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+      );
 
-    m_Device.copyBuffer(stagingBuffer, m_VertexBuffer, bufferSize);
-
-    // Destroy staging buffer
-    vkDestroyBuffer(m_Device.device(), stagingBuffer, nullptr);
-    vkFreeMemory(m_Device.device(), stagingBufferMemory, nullptr);
+    m_Device.copyBuffer(stagingBuffer.getBuffer(), m_VertexBuffer->getBuffer(), bufferSize);
   }
 
   void Model::createIndexBuffers(const std::vector<uint32_t>& indices) {
@@ -75,34 +112,28 @@ namespace ox {
     }
 
     VkDeviceSize bufferSize = sizeof(indices[0]) * m_IndexCount;
+    uint32_t indexSize = sizeof(indices[0]);
 
-    VkBuffer stagingBuffer;
-    VkDeviceMemory stagingBufferMemory;
+    Buffer stagingBuffer = {
+      m_Device,
+      indexSize,
+      m_IndexCount,
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+    };
 
-    m_Device.createBuffer(
-        bufferSize,
-        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-        stagingBuffer,
-        stagingBufferMemory);
+    stagingBuffer.map();
+    stagingBuffer.writeToBuffer((void*)indices.data());
 
-    void* data;
-    vkMapMemory(m_Device.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-    memcpy(data, indices.data(), static_cast<size_t>(bufferSize));
-    vkUnmapMemory(m_Device.device(), stagingBufferMemory);
-
-    m_Device.createBuffer(
-        bufferSize,
+    m_IndexBuffer = std::make_unique<Buffer>(
+        m_Device,
+        indexSize,
+        m_IndexCount,
         VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-        m_IndexBuffer,
-        m_IndexBufferMemory);
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+    );
 
-    m_Device.copyBuffer(stagingBuffer, m_IndexBuffer, bufferSize);
-
-    // Destroy staging buffer
-    vkDestroyBuffer(m_Device.device(), stagingBuffer, nullptr);
-    vkFreeMemory(m_Device.device(), stagingBufferMemory, nullptr);
+    m_Device.copyBuffer(stagingBuffer.getBuffer(), m_IndexBuffer->getBuffer(), bufferSize);
   }
 
   void Model::loadFromFile(const std::string& path) {
@@ -168,7 +199,7 @@ namespace ox {
       m_Vertices.push_back(
           { glm::vec3(position.x, position.y, position.z),
             glm::vec3(normal.x, normal.y, normal.z),
-            glm::vec3(1.0f, 0.0f, 0.0f) });
+            glm::vec2(texCoord.x, texCoord.y) });
     }
 
     std::cout << "Normal count: " << m_Normals.size() << "\n";
@@ -230,12 +261,12 @@ namespace ox {
   }
 
   void Model::bind(VkCommandBuffer commandBuffer) {
-    VkBuffer buffers[] = {m_VertexBuffer};
+    VkBuffer buffers[] = {m_VertexBuffer->getBuffer()};
     VkDeviceSize offsets[] = {0};
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 
     if (m_HasIndexBuffer) {
-      vkCmdBindIndexBuffer(commandBuffer, m_IndexBuffer, 0, VK_INDEX_TYPE_UINT32);
+      vkCmdBindIndexBuffer(commandBuffer, m_IndexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
     }
   }
 
@@ -273,8 +304,8 @@ namespace ox {
     // Color
     attributeDescriptions[2].binding = 0;
     attributeDescriptions[2].location = 2;
-    attributeDescriptions[2].format = VK_FORMAT_R32G32B32_SFLOAT;
-    attributeDescriptions[2].offset = offsetof(Vertex, color);
+    attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+    attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
 
     return attributeDescriptions;
   }

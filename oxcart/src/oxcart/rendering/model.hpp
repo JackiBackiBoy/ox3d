@@ -2,14 +2,16 @@
 
 #include "oxcart/core/core.hpp"
 #include "oxcart/rendering/graphicsDevice.hpp"
+#include "oxcart/rendering/buffer.hpp"
 #include "oxcart/rendering/mesh.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <assimp/scene.h>
-
 #include <vector>
+#include <memory>
 
 namespace ox {
   class OX_API Model {
@@ -17,7 +19,7 @@ namespace ox {
       struct OX_API Vertex {
         glm::vec3 position;
         glm::vec3 normal;
-        glm::vec3 color;
+        glm::vec2 texCoord;
 
         static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
         static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
@@ -36,6 +38,7 @@ namespace ox {
       void draw(VkCommandBuffer commandBuffer);
 
     private:
+      void createTextures();
       void createVertexBuffers(const std::vector<Vertex>& vertices);
       void createIndexBuffers(const std::vector<uint32_t>& indices);
 
@@ -56,12 +59,15 @@ namespace ox {
 
       GraphicsDevice& m_Device;
 
-      bool m_HasIndexBuffer = false;
-      VkBuffer m_VertexBuffer;
-      VkDeviceMemory m_VertexBufferMemory;
+      VkImageView m_TextureImageView;
+      VkImage m_TextureImage;
+      VkDeviceMemory m_TextureImageMemory;
+
+      std::unique_ptr<Buffer> m_VertexBuffer;
       uint32_t m_VertexCount;
-      VkBuffer m_IndexBuffer;
-      VkDeviceMemory m_IndexBufferMemory;
+
+      bool m_HasIndexBuffer = false;
+      std::unique_ptr<Buffer> m_IndexBuffer;
       uint32_t m_IndexCount;
   };
 }

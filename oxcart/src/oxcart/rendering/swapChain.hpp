@@ -46,6 +46,7 @@ namespace ox {
     void init();
     void createSwapChain();
     void createImageViews();
+    void createTextureSampler();
     void createDepthResources();
     void createRenderPass();
     void createFramebuffers();
@@ -58,6 +59,7 @@ namespace ox {
         const std::vector<VkPresentModeKHR> &availablePresentModes);
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
 
+    VkSampler m_TextureSampler;
     VkFormat swapChainImageFormat;
     VkFormat swapChainDepthFormat;
     VkExtent2D swapChainExtent;

@@ -59,6 +59,8 @@ namespace ox {
         throw std::runtime_error("VULKAN ERROR: Swap chain image (or depth) format has changed!");
         // TODO: Instead of throwing error, handle it automatically by updating
       }
+
+      // TODO: Recreate swap chain image views createImageViews()
     }
     // come back
   }

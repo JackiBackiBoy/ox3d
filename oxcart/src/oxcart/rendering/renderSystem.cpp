@@ -10,9 +10,10 @@
 #include <iostream>
 
 namespace ox {
-  RenderSystem::RenderSystem(GraphicsDevice& device, VkRenderPass renderPass)
+  RenderSystem::RenderSystem(GraphicsDevice& device, VkRenderPass renderPass,
+      VkDescriptorSetLayout globalSetLayout)
       : m_Device{device} {
-    createPipelineLayout();
+    createPipelineLayout(globalSetLayout);
     createPipeline(renderPass);
   }
 
@@ -20,17 +21,19 @@ namespace ox {
     vkDestroyPipelineLayout(m_Device.device(), m_PipelineLayout, nullptr);
   }
 
-  void RenderSystem::createPipelineLayout() {
+  void RenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
     // Push constants
     VkPushConstantRange pushConstantRange{};
     pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
     pushConstantRange.offset = 0;
     pushConstantRange.size = sizeof(SimplePushConstantData);
 
+    std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
+
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo.setLayoutCount = 0;
-    pipelineLayoutInfo.pSetLayouts = nullptr;
+    pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+    pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
     pipelineLayoutInfo.pushConstantRangeCount = 1;
     pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
@@ -57,32 +60,34 @@ namespace ox {
         pipelineConfig);
   }
 
-  void RenderSystem::renderEntities(
-      VkCommandBuffer commandBuffer,
-      std::vector<Entity>& entities,
-      const Camera& camera) {
-    m_Pipeline->bind(commandBuffer);
+  void RenderSystem::renderEntities(FrameInfo& frameInfo, std::vector<Entity>& entities) {
+    m_Pipeline->bind(frameInfo.commandBuffer);
 
-    auto projectionView = camera.getProjection() * camera.getView();
+    vkCmdBindDescriptorSets(
+        frameInfo.commandBuffer,
+        VK_PIPELINE_BIND_POINT_GRAPHICS,
+        m_PipelineLayout,
+        0,
+        1,
+        &frameInfo.globalDescriptorSet,
+        0,
+        nullptr);
 
     for (auto& obj: entities) {
-      glm::mat4 modelMatrix = glm::mat4(1.0f);
-      modelMatrix = glm::translate(modelMatrix, obj.getComponent<Transform>()->position);
-
       SimplePushConstantData push{};
-      push.transform = projectionView * modelMatrix;
-      push.modelMatrix = modelMatrix;
+      push.modelMatrix = obj.getComponent<Transform>()->mat4();
+      push.normalMatrix = obj.getComponent<Transform>()->normalMatrix();
 
       vkCmdPushConstants(
-          commandBuffer,
+          frameInfo.commandBuffer,
           m_PipelineLayout,
           VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
           0,
           sizeof(SimplePushConstantData),
           &push);
 
-      obj.model->bind(commandBuffer);
-      obj.model->draw(commandBuffer);
+      obj.model->bind(frameInfo.commandBuffer);
+      obj.model->draw(frameInfo.commandBuffer);
     }
   }
 }

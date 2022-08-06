@@ -7,7 +7,7 @@ class Sandbox : public ox::Application {
     ox::Transform* playerTransform;
 
   public:
-    Sandbox() : Application::Application() {}
+    Sandbox() : ox::Application::Application() {}
 
     void onStart() override {
       auto player = ox::Entity::createEntity();

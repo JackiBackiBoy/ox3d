@@ -1,11 +1,13 @@
 #pragma once
 
 #include "oxcart/core/core.hpp"
-#include "oxcart/rendering/graphicsDevice.hpp"
-#include "oxcart/data/entity.hpp"
-#include "oxcart/rendering/renderer.hpp"
 #include "oxcart/core/window.hpp"
+#include "oxcart/data/entity.hpp"
+#include "oxcart/rendering/descriptors.hpp"
+#include "oxcart/rendering/graphicsDevice.hpp"
+#include "oxcart/rendering/renderer.hpp"
 
+// std
 #include <memory>
 #include <vector>
 
@@ -29,12 +31,14 @@ namespace ox {
       void run();
 
     protected:
-      std::vector<Entity> m_Entities;
-      Window m_Window{WIDTH, HEIGHT, "Vulkan Renderer"};
+      Window m_Window{WIDTH, HEIGHT, "Oxcart | Vulkan Renderer"};
       GraphicsDevice m_Device{m_Window};
+      Renderer m_Renderer{m_Window, m_Device};
+
+      std::unique_ptr<DescriptorPool> globalPool{};
+      std::vector<Entity> m_Entities;
 
     private:
-      Renderer m_Renderer{m_Window, m_Device};
       glm::vec2 lastMousePos;
       float lastAspectRatio = 0;
   };

@@ -9,7 +9,7 @@ namespace ox {
   struct OX_API PipelineConfigInfo {
     PipelineConfigInfo(const PipelineConfigInfo&) = delete;
     PipelineConfigInfo& operator=(const PipelineConfigInfo&) = delete;
-    // should also declare PipelineConfigInfo() = default;
+    PipelineConfigInfo() = default;
 
     VkPipelineViewportStateCreateInfo viewportInfo;
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;

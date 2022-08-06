@@ -5,31 +5,30 @@
 #include "oxcart/rendering/graphicsDevice.hpp"
 #include "oxcart/data/entity.hpp"
 #include "oxcart/rendering/graphicsPipeline.hpp"
+#include "oxcart/rendering/frameInfo.hpp"
 
 #include <memory>
 #include <vector>
 
 namespace ox {
   struct OX_API SimplePushConstantData {
-    glm::mat4 transform{1.0f};
     glm::mat4 modelMatrix{1.0f};
+    glm::mat4 normalMatrix{1.0f};
   };
   
   class OX_API RenderSystem {
     public:
-      RenderSystem(GraphicsDevice& device, VkRenderPass renderPass);
+      RenderSystem(GraphicsDevice& device, VkRenderPass renderPass,
+          VkDescriptorSetLayout globalSetLayout);
       ~RenderSystem();
 
       // Delete copy constructors
       RenderSystem(const RenderSystem&) = delete;
       RenderSystem& operator=(const RenderSystem&) = delete;
 
-      void renderEntities(
-          VkCommandBuffer commandBuffer,
-          std::vector<Entity>& entities,
-          const Camera& camera);
+      void renderEntities(FrameInfo& frameInfo, std::vector<Entity>& entities);
     private:
-      void createPipelineLayout();
+      void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
       void createPipeline(VkRenderPass renderPass);
 
       GraphicsDevice& m_Device;
