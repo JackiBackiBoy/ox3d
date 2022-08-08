@@ -4,8 +4,9 @@
 #include "oxcart/rendering/graphicsDevice.hpp"
 #include "oxcart/rendering/buffer.hpp"
 #include "oxcart/rendering/mesh.hpp"
+#include "oxcart/rendering/texture.hpp"
+#include "oxcart/rendering/descriptors.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
@@ -35,12 +36,12 @@ namespace ox {
 
       void loadFromFile(const std::string& path);
       void bind(VkCommandBuffer commandBuffer);
-      void draw(VkCommandBuffer commandBuffer);
+      void draw(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout);
 
     private:
-      void createTextures();
       void createVertexBuffers(const std::vector<Vertex>& vertices);
       void createIndexBuffers(const std::vector<uint32_t>& indices);
+      void bindTextures();
 
       void initFromScene(const aiScene* scene);
       void initMeshes(const aiScene* scene);
@@ -50,18 +51,19 @@ namespace ox {
       void reserveSpace(const uint32_t& numVertices, const uint32_t& numIndices);
 
       std::vector<Mesh> m_Meshes;
-      //std::vector<Texture*> m_Textures;
+      std::vector<Texture*> m_Textures;
       std::vector<glm::vec3> m_Positions;
       std::vector<glm::vec3> m_Normals;
       std::vector<glm::vec2> m_TexCoords;
       std::vector<uint32_t> m_Indices;
       std::vector<Vertex> m_Vertices;
 
+      std::vector<VkWriteDescriptorSet> writes;
+      VkDescriptorPool m_DescriptorPool;
+      std::vector<VkDescriptorPoolSize> m_PoolSize;
+      std::unique_ptr<DescriptorSetLayout> m_ImageSetLayout;
       GraphicsDevice& m_Device;
-
-      VkImageView m_TextureImageView;
-      VkImage m_TextureImage;
-      VkDeviceMemory m_TextureImageMemory;
+      std::vector<VkDescriptorImageInfo> imageInfos;
 
       std::unique_ptr<Buffer> m_VertexBuffer;
       uint32_t m_VertexCount;

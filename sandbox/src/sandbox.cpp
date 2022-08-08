@@ -17,7 +17,7 @@ class Sandbox : public ox::Application {
       ox::Camera::current = playerCamera; // set current camera
 
       playerTransform = player.getComponent<ox::Transform>();
-      std::shared_ptr model = std::make_unique<ox::Model>(m_Device, "assets/models/waterbottle/WaterBottle.gltf");
+      std::shared_ptr model = std::make_unique<ox::Model>(m_Device, "assets/models/helmet/FlightHelmet.gltf");
 
       auto cube = ox::Entity::createEntity();
       cube.model = model;
@@ -27,10 +27,10 @@ class Sandbox : public ox::Application {
       cubeTransform->scale = { 0.5f, 0.5f, 0.5f };
       m_Entities.push_back(std::move(cube));
 
-      auto plane = ox::Entity::createEntity();
-      plane.model = std::make_unique<ox::Model>(m_Device, "assets/models/cube.gltf");
-      plane.getComponent<ox::Transform>()->position = { 0.0f , -2.0f, 0.0f };
-      m_Entities.push_back(std::move(plane));
+      //auto plane = ox::Entity::createEntity();
+      //plane.model = std::make_unique<ox::Model>(m_Device, "assets/models/cube.gltf");
+      //plane.getComponent<ox::Transform>()->position = { 0.0f , -2.0f, 0.0f };
+      //m_Entities.push_back(std::move(plane));
     }
 
     void onUpdate(const float& dt) override {

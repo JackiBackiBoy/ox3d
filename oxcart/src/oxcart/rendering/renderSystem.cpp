@@ -11,9 +11,9 @@
 
 namespace ox {
   RenderSystem::RenderSystem(GraphicsDevice& device, VkRenderPass renderPass,
-      VkDescriptorSetLayout globalSetLayout)
+      std::vector<VkDescriptorSetLayout>& setLayouts)
       : m_Device{device} {
-    createPipelineLayout(globalSetLayout);
+    createPipelineLayout(setLayouts);
     createPipeline(renderPass);
   }
 
@@ -21,19 +21,17 @@ namespace ox {
     vkDestroyPipelineLayout(m_Device.device(), m_PipelineLayout, nullptr);
   }
 
-  void RenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
+  void RenderSystem::createPipelineLayout(std::vector<VkDescriptorSetLayout>& setLayouts) {
     // Push constants
     VkPushConstantRange pushConstantRange{};
     pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
     pushConstantRange.offset = 0;
     pushConstantRange.size = sizeof(SimplePushConstantData);
 
-    std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
-
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
-    pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
+    pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(setLayouts.size());
+    pipelineLayoutInfo.pSetLayouts = setLayouts.data();
     pipelineLayoutInfo.pushConstantRangeCount = 1;
     pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
@@ -63,20 +61,22 @@ namespace ox {
   void RenderSystem::renderEntities(FrameInfo& frameInfo, std::vector<Entity>& entities) {
     m_Pipeline->bind(frameInfo.commandBuffer);
 
+    // Binding of descriptor sets (ubo, texture samplers)
+    //===================================================
     vkCmdBindDescriptorSets(
         frameInfo.commandBuffer,
         VK_PIPELINE_BIND_POINT_GRAPHICS,
         m_PipelineLayout,
         0,
         1,
-        &frameInfo.globalDescriptorSet,
+        &frameInfo.descriptorSets[0],
         0,
         nullptr);
 
-    for (auto& obj: entities) {
+    for (auto& ent: entities) {
       SimplePushConstantData push{};
-      push.modelMatrix = obj.getComponent<Transform>()->mat4();
-      push.normalMatrix = obj.getComponent<Transform>()->normalMatrix();
+      push.modelMatrix = ent.getComponent<Transform>()->mat4();
+      push.normalMatrix = ent.getComponent<Transform>()->normalMatrix();
 
       vkCmdPushConstants(
           frameInfo.commandBuffer,
@@ -86,8 +86,8 @@ namespace ox {
           sizeof(SimplePushConstantData),
           &push);
 
-      obj.model->bind(frameInfo.commandBuffer);
-      obj.model->draw(frameInfo.commandBuffer);
+      ent.model->bind(frameInfo.commandBuffer);
+      ent.model->draw(frameInfo.commandBuffer, m_PipelineLayout);
     }
   }
 }

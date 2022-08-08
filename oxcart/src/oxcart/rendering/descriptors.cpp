@@ -3,6 +3,7 @@
 // std
 #include <cassert>
 #include <stdexcept>
+#include <iostream>
  
 namespace ox {
   // *************** Descriptor Set Layout Builder *********************
@@ -77,6 +78,7 @@ namespace ox {
   }
    
   // *************** Descriptor Pool *********************
+  //======================================================
    
   DescriptorPool::DescriptorPool(
       GraphicsDevice &lveDevice,
@@ -179,6 +181,7 @@ namespace ox {
   bool DescriptorWriter::build(VkDescriptorSet &set) {
     bool success = pool.allocateDescriptor(setLayout.getDescriptorSetLayout(), set);
     if (!success) {
+      std::cout << "Failed allocation!" << std::endl;
       return false;
     }
     overwrite(set);

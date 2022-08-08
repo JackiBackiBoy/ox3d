@@ -2,6 +2,7 @@
 
 #include "oxcart/components/camera.hpp"
 #include <vulkan/vulkan.h>
+#include <vector>
 
 namespace ox {
   struct FrameInfo {
@@ -9,6 +10,6 @@ namespace ox {
     float frameTime;
     VkCommandBuffer commandBuffer;
     Camera& camera;
-    VkDescriptorSet globalDescriptorSet;
+    std::vector<VkDescriptorSet>& descriptorSets;
   };
 }

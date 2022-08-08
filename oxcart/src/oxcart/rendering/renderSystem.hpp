@@ -19,7 +19,7 @@ namespace ox {
   class OX_API RenderSystem {
     public:
       RenderSystem(GraphicsDevice& device, VkRenderPass renderPass,
-          VkDescriptorSetLayout globalSetLayout);
+          std::vector<VkDescriptorSetLayout>& setLayouts);
       ~RenderSystem();
 
       // Delete copy constructors
@@ -28,7 +28,7 @@ namespace ox {
 
       void renderEntities(FrameInfo& frameInfo, std::vector<Entity>& entities);
     private:
-      void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
+      void createPipelineLayout(std::vector<VkDescriptorSetLayout>& setLayouts);
       void createPipeline(VkRenderPass renderPass);
 
       GraphicsDevice& m_Device;

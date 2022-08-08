@@ -457,4 +457,6 @@ namespace ox {
         VK_IMAGE_TILING_OPTIMAL,
         VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
   }
+
+  VkSampler SwapChain::m_TextureSampler = 0;
 }
