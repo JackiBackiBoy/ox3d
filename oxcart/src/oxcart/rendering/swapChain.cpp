@@ -142,7 +142,7 @@ namespace ox {
     SwapChainSupportDetails swapChainSupport = device.getSwapChainSupport();
 
     VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
-    VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
+    VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes, true);
     VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
 
     uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
@@ -416,9 +416,9 @@ namespace ox {
   }
 
   VkPresentModeKHR SwapChain::chooseSwapPresentMode(
-      const std::vector<VkPresentModeKHR> &availablePresentModes) {
+      const std::vector<VkPresentModeKHR> &availablePresentModes, const bool& vSync) {
     for (const auto &availablePresentMode : availablePresentModes) {
-      if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+      if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR && !vSync) {
         std::cout << "Present mode: Mailbox" << std::endl;
         return availablePresentMode;
       }

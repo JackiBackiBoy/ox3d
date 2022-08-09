@@ -23,14 +23,14 @@ class Sandbox : public ox::Application {
       cube.model = model;
 
       auto cubeTransform = cube.getComponent<ox::Transform>();
-      cubeTransform->position = { 0.0f, -0.5f, 0.0f };
+      cubeTransform->position = { 0.0f, 0.3f, 0.0f };
       cubeTransform->scale = { 0.5f, 0.5f, 0.5f };
       m_Entities.push_back(std::move(cube));
 
-      //auto plane = ox::Entity::createEntity();
-      //plane.model = std::make_unique<ox::Model>(m_Device, "assets/models/cube.gltf");
-      //plane.getComponent<ox::Transform>()->position = { 0.0f , -2.0f, 0.0f };
-      //m_Entities.push_back(std::move(plane));
+      auto plane = ox::Entity::createEntity();
+      plane.model = std::make_unique<ox::Model>(m_Device, "assets/models/cube.gltf");
+      plane.getComponent<ox::Transform>()->position = { 0.0f , -1.2f, 0.0f };
+      m_Entities.push_back(std::move(plane));
     }
 
     void onUpdate(const float& dt) override {

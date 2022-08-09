@@ -23,8 +23,11 @@ namespace ox {
   }
 
   Model::~Model() {
-    for (size_t i = 0; i < m_Textures.size(); i++) {
-      delete m_Textures[i];
+    for (size_t i = 0; i < m_DiffuseTextures.size(); i++) {
+      delete m_DiffuseTextures[i];
+    }
+    for (size_t i = 0; i < m_NormalTextures.size(); i++) {
+      delete m_NormalTextures[i];
     }
   }
 
@@ -90,25 +93,24 @@ namespace ox {
   }
 
   void Model::bindTextures() {
-    m_PoolSize.resize(m_Meshes.size());
-    for (size_t i = 0; i < m_PoolSize.size(); i++) {
-      m_PoolSize[i].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-      m_PoolSize[i].descriptorCount = 1;
-    }
+    // Specify descriptor set 
+    m_PoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    m_PoolSize.descriptorCount = m_Meshes.size() * 2;
 
     VkDescriptorPoolCreateInfo descriptorPool = {};
     descriptorPool.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     descriptorPool.pNext = NULL;
-    descriptorPool.maxSets = m_PoolSize.size();
-    descriptorPool.poolSizeCount = m_PoolSize.size();
-    descriptorPool.pPoolSizes = m_PoolSize.data();
+    descriptorPool.maxSets = m_Meshes.size();
+    descriptorPool.poolSizeCount = 1;
+    descriptorPool.pPoolSizes = &m_PoolSize;
 
     vkCreateDescriptorPool(m_Device.device(), &descriptorPool, NULL, &m_DescriptorPool);
 
     // Allocate descriptor set from the pool
     VkDescriptorSetLayout layouts[1];
     layouts[0] = m_ImageSetLayout->getDescriptorSetLayout();
-    std::vector<VkDescriptorSetAllocateInfo> allocInfos(m_PoolSize.size());
+
+    std::vector<VkDescriptorSetAllocateInfo> allocInfos(m_Meshes.size());
     for (size_t i = 0; i < allocInfos.size(); i++) {
       allocInfos[i].sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
       allocInfos[i].pNext = NULL;
@@ -117,27 +119,44 @@ namespace ox {
       allocInfos[i].pSetLayouts = layouts;
     }
 
-    writes.resize(m_PoolSize.size());
+    writes.resize(m_Meshes.size() * 2);
+    imageInfos.resize(m_Meshes.size() * 2);
 
     for (size_t i = 0; i < m_Meshes.size(); i++) {
-      // Create descriptor set for each mesh
-      VkDescriptorImageInfo imageInfo{};
-      imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-      imageInfo.imageView = *m_Textures[m_Meshes[i].materialIndex]->getImageView();
-      imageInfo.sampler = SwapChain::m_TextureSampler;
+      size_t iDiff = i * 2;
+      size_t iNorm = i * 2 + 1;
 
-      imageInfos.push_back(imageInfo);
+      // Specify diffuse map image info
+      imageInfos[iDiff] = {};
+      imageInfos[iDiff].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+      imageInfos[iDiff].imageView = *m_DiffuseTextures[m_Meshes[i].materialIndex]->getImageView();
+      imageInfos[iDiff].sampler = SwapChain::m_TextureSampler;
 
-      std::cout << "Material index: " << m_Meshes[i].materialIndex << std::endl;
+      // Specify normal map image info
+      imageInfos[iNorm] = {};
+      imageInfos[iNorm].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+      imageInfos[iNorm].imageView = *m_NormalTextures[m_Meshes[i].materialIndex]->getImageView();
+      imageInfos[iNorm].sampler = SwapChain::m_TextureSampler;
 
       vkAllocateDescriptorSets(m_Device.device(), &allocInfos[i], &m_Meshes[i].m_DescriptorSet);
-      writes[i] = {};
-      writes[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-      writes[i].dstSet = m_Meshes[i].m_DescriptorSet; // look into
-      writes[i].descriptorCount = 1;
-      writes[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-      writes[i].pImageInfo = &imageInfos[i];
-      writes[i].dstBinding = 0;
+
+      // Write diffuse map data
+      writes[iDiff] = {};
+      writes[iDiff].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      writes[iDiff].dstSet = m_Meshes[i].m_DescriptorSet;
+      writes[iDiff].descriptorCount = 1;
+      writes[iDiff].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+      writes[iDiff].pImageInfo = &imageInfos[iDiff];
+      writes[iDiff].dstBinding = 0;
+
+      // Write normal map data
+      writes[iNorm] = {};
+      writes[iNorm].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      writes[iNorm].dstSet = m_Meshes[i].m_DescriptorSet;
+      writes[iNorm].descriptorCount = 1;
+      writes[iNorm].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+      writes[iNorm].pImageInfo = &imageInfos[iNorm];
+      writes[iNorm].dstBinding = 1;
     }
 
     vkUpdateDescriptorSets(m_Device.device(), writes.size(), writes.data(), 0, NULL);
@@ -147,8 +166,14 @@ namespace ox {
     std::string enginePath = ENGINE_DIR + path;
 
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(enginePath,
-        aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_MakeLeftHanded | aiProcess_JoinIdenticalVertices);
+    const aiScene* scene = importer.ReadFile(
+        enginePath,
+        aiProcess_Triangulate |
+        aiProcess_FlipUVs |
+        aiProcess_MakeLeftHanded |
+        aiProcess_JoinIdenticalVertices|
+        aiProcess_CalcTangentSpace);
+
     if (!scene) {
       std::cout << "ASSIMP ERROR: " << importer.GetErrorString() << std::endl;
       throw std::runtime_error("ASSIMP ERROR: Failed to load model!");
@@ -164,10 +189,12 @@ namespace ox {
 
   void Model::initFromScene(const aiScene* scene) {
     m_Meshes.resize(scene->mNumMeshes);
-    m_Textures.resize(scene->mNumMaterials); // TODO: Fix materal count
+    m_DiffuseTextures.resize(scene->mNumMaterials); // TODO: Fix materal count
+    m_NormalTextures.resize(scene->mNumMaterials); // TODO: Fix materal count
 
     m_ImageSetLayout = DescriptorSetLayout::Builder(m_Device)
       .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+      .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
       .build();
 
     std::cout << "Model mesh count: " << scene->mNumMeshes << std::endl;
@@ -203,6 +230,8 @@ namespace ox {
     for (size_t i = 0; i < mesh->mNumVertices; i++) {
       const aiVector3D& position = mesh->mVertices[i];
       const aiVector3D& normal = mesh->mNormals[i];
+      const aiVector3D& tangent = mesh->mTangents[i];
+      const aiVector3D& bitangent = mesh->mBitangents[i];
       const aiVector3D& texCoord = mesh->HasTextureCoords(0) ?
                                    mesh->mTextureCoords[0][i] : zero3D;
 
@@ -213,6 +242,8 @@ namespace ox {
       m_Vertices.push_back(
           { glm::vec3(position.x, position.y, position.z),
             glm::vec3(normal.x, normal.y, normal.z),
+            glm::vec3(tangent.x, tangent.y, tangent.z),
+            glm::vec3(bitangent.x, bitangent.y, bitangent.z),
             glm::vec2(texCoord.x, texCoord.y) });
     }
 
@@ -231,25 +262,28 @@ namespace ox {
     for (size_t i = 0; i < scene->mNumMaterials; i++) {
       const aiMaterial* material = scene->mMaterials[i];
 
-      // Check texture count, continue if they exist
-      if (material->GetTextureCount(aiTextureType_DIFFUSE) == 0) {
-        m_Textures[i] = new Texture(m_Device);
-        std::string tempPath = std::string(ENGINE_DIR) + "assets/textures/1x1.png";
-        m_Textures[i]->loadFromFile(tempPath);
-        std::cout << "Failed at index: " << i << std::endl;
-        std::cout << "ASSIMP WARNING: No model textures found!" << std::endl;
+      aiString tempPath;
+
+      // Diffuse map texture
+      m_DiffuseTextures[i] = new Texture(m_Device);
+      if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+        getTexturePath(material, aiTextureType_DIFFUSE, tempPath);
+        m_DiffuseTextures[i]->loadFromFile(modelDir + "/" + tempPath.C_Str());
       }
       else {
-        aiString tempPath;
-        if (material->GetTexture(aiTextureType_DIFFUSE, 0, &tempPath, NULL, NULL, NULL, NULL) != AI_SUCCESS) {
-          throw std::runtime_error("ASSIMP ERROR: Failed to retrieve model texture!");
-        }
+        m_DiffuseTextures[i]->loadFromFile(std::string(ENGINE_DIR) + "assets/textures/1x1.png");
+      }
 
-        std::string texturePath = modelDir + "/" + std::string(tempPath.data);
-        std::cout << "ASSIMP INFO: Loading texture from " << texturePath << std::endl;
+      tempPath = "";
 
-        m_Textures[i] = new Texture(m_Device);
-        m_Textures[i]->loadFromFile(texturePath);
+      // Normal map texture
+      m_NormalTextures[i] = new Texture(m_Device);
+      if (material->GetTextureCount(aiTextureType_NORMALS) != 0) {
+        getTexturePath(material, aiTextureType_NORMALS, tempPath);
+        m_NormalTextures[i]->loadFromFile(modelDir + "/" + tempPath.C_Str());
+      }
+      else {
+        m_NormalTextures[i]->loadFromFile(std::string(ENGINE_DIR) + "assets/textures/1x1.png");
       }
     }
   }
@@ -271,6 +305,12 @@ namespace ox {
     m_Normals.reserve(numVertices);
     m_TexCoords.reserve(numVertices);
     m_Indices.reserve(numIndices);
+  }
+
+  void Model::getTexturePath(const aiMaterial* material, const aiTextureType& texType, aiString& dstPath) {
+    if (material->GetTexture(texType, 0, &dstPath, NULL, NULL, NULL, NULL) != AI_SUCCESS) {
+      throw std::runtime_error("ASSIMP ERROR: Failed to retrieve model texture!");
+    }
   }
 
   void Model::bind(VkCommandBuffer commandBuffer) {
@@ -317,7 +357,7 @@ namespace ox {
   }
 
   std::vector<VkVertexInputAttributeDescription> Model::Vertex::getAttributeDescriptions() {
-    std::vector<VkVertexInputAttributeDescription> attributeDescriptions(3);
+    std::vector<VkVertexInputAttributeDescription> attributeDescriptions(5);
     // Position
     attributeDescriptions[0].binding = 0;
     attributeDescriptions[0].location = 0;
@@ -330,11 +370,23 @@ namespace ox {
     attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
     attributeDescriptions[1].offset = offsetof(Vertex, normal);
 
-    // Color
+    // Tangent
     attributeDescriptions[2].binding = 0;
     attributeDescriptions[2].location = 2;
-    attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-    attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
+    attributeDescriptions[2].format = VK_FORMAT_R32G32B32_SFLOAT;
+    attributeDescriptions[2].offset = offsetof(Vertex, tangent);
+
+    // Bi-Tangent
+    attributeDescriptions[3].binding = 0;
+    attributeDescriptions[3].location = 3;
+    attributeDescriptions[3].format = VK_FORMAT_R32G32B32_SFLOAT;
+    attributeDescriptions[3].offset = offsetof(Vertex, bitangent);
+
+    // Color
+    attributeDescriptions[4].binding = 0;
+    attributeDescriptions[4].location = 4;
+    attributeDescriptions[4].format = VK_FORMAT_R32G32_SFLOAT;
+    attributeDescriptions[4].offset = offsetof(Vertex, texCoord);
 
     return attributeDescriptions;
   }

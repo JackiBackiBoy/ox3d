@@ -1,5 +1,5 @@
 #include "oxcart/core/application.hpp"
-#include "oxcart/rendering/renderSystem.hpp"
+#include "oxcart/rendering/systems/renderSystem.hpp"
 #include "oxcart/rendering/buffer.hpp"
 #include "oxcart/components/camera.hpp"
 #include "oxcart/components/transform.hpp"
@@ -18,8 +18,11 @@
 
 namespace ox {
   struct GlobalUBO {
-    glm::mat4 projectionView{1.0f};
-    glm::vec3 lightDirection = glm::normalize(glm::vec3(1.0f, 3.0f, 1.0f));
+    glm::mat4 projection{1.0f};
+    glm::mat4 view{1.0f};
+    glm::vec4 ambientLightColor{1.0f, 1.0f, 1.0f, 0.02f}; // w is intensity
+    glm::vec3 lightPosition{-2.0f, 3.0f, -1.0f};
+    alignas(16) glm::vec4 lightColor{1.0f}; // w is intensity
   };
 
   Application::Application() {
@@ -73,6 +76,7 @@ namespace ox {
 
     auto imageSetLayout = DescriptorSetLayout::Builder(m_Device)
       .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+      .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
       .build();
 
     std::vector<VkDescriptorSet> globalDescriptorSets(SwapChain::MAX_FRAMES_IN_FLIGHT);
@@ -129,7 +133,8 @@ namespace ox {
 
         // Update
         GlobalUBO ubo{};
-        ubo.projectionView = Camera::current->getProjection() * Camera::current->getView();
+        ubo.projection = Camera::current->getProjection();
+        ubo.view = Camera::current->getView();
         uboBuffers[frameIndex]->writeToBuffer(&ubo);
         uboBuffers[frameIndex]->flush();
         

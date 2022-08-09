@@ -57,7 +57,7 @@ namespace ox {
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(
         const std::vector<VkSurfaceFormatKHR> &availableFormats);
     VkPresentModeKHR chooseSwapPresentMode(
-        const std::vector<VkPresentModeKHR> &availablePresentModes);
+        const std::vector<VkPresentModeKHR> &availablePresentModes, const bool& vSync);
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
 
     VkFormat swapChainImageFormat;

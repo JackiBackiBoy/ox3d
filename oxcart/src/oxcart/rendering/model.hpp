@@ -12,6 +12,7 @@
 #include <glm/glm.hpp>
 #include <assimp/scene.h>
 #include <vector>
+#include <unordered_map>
 #include <memory>
 
 namespace ox {
@@ -20,6 +21,8 @@ namespace ox {
       struct OX_API Vertex {
         glm::vec3 position;
         glm::vec3 normal;
+        glm::vec3 tangent;
+        glm::vec3 bitangent;
         glm::vec2 texCoord;
 
         static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
@@ -49,9 +52,11 @@ namespace ox {
       void initMaterials(const aiScene* scene, const std::string& modelDir);
       void countVerticesIndices(const aiScene* scene, uint32_t& numVertices, uint32_t& numIndices);
       void reserveSpace(const uint32_t& numVertices, const uint32_t& numIndices);
+      void getTexturePath(const aiMaterial* material, const aiTextureType& texType, aiString& dstPath);
 
       std::vector<Mesh> m_Meshes;
-      std::vector<Texture*> m_Textures;
+      std::vector<Texture*> m_DiffuseTextures;
+      std::vector<Texture*> m_NormalTextures;
       std::vector<glm::vec3> m_Positions;
       std::vector<glm::vec3> m_Normals;
       std::vector<glm::vec2> m_TexCoords;
@@ -60,7 +65,7 @@ namespace ox {
 
       std::vector<VkWriteDescriptorSet> writes;
       VkDescriptorPool m_DescriptorPool;
-      std::vector<VkDescriptorPoolSize> m_PoolSize;
+      VkDescriptorPoolSize m_PoolSize;
       std::unique_ptr<DescriptorSetLayout> m_ImageSetLayout;
       GraphicsDevice& m_Device;
       std::vector<VkDescriptorImageInfo> imageInfos;
