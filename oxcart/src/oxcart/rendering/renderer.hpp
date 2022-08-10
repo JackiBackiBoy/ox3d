@@ -39,7 +39,7 @@ namespace ox {
       std::unique_ptr<SwapChain> m_SwapChain;
       std::vector<VkCommandBuffer> m_CommandBuffers;
       uint32_t m_CurrentImageIndex{0};
-      int m_CurrentFrameIndex;
+      int m_CurrentFrameIndex{};
       bool m_IsFrameStarted{false};
   };
 }

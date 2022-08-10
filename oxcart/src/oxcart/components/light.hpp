@@ -1,5 +1,4 @@
-#ifndef LIGHT_COMPONENT_HEADER
-#define LIGHT_COMPONENT_HEADER
+#pragma once
 
 #include "oxcart/core/core.hpp"
 #include "oxcart/components/component.hpp"
@@ -7,7 +6,6 @@
 namespace ox {
   class OX_API Light : public Component {
     public:
-      Light() : Component() {};
+      Light();
   };
 }
-#endif /* LIGHT_COMPONENT_HEADER */

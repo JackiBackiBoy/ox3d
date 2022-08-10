@@ -125,8 +125,8 @@ file(GLOB_RECURSE HEADER_FILES ${CMAKE_HOME_DIRECTORY}/${NAME}/*.hpp)
 add_library(${NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES})
 
 # Eliminate target prefixes
-set_target_properties(${NAME} PROPERTIES PREFIX "lib")
-set_target_properties(${NAME} PROPERTIES IMPORT_PREFIX "sym")
+set_target_properties(${NAME} PROPERTIES PREFIX "")
+set_target_properties(${NAME} PROPERTIES IMPORT_PREFIX "")
 
 # Standard c++ version
 target_compile_features(${NAME} PUBLIC cxx_std_17)

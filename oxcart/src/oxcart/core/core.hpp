@@ -9,7 +9,7 @@
   #endif
 #else
   #ifdef WIN32
-    #define OX_API __declspec(dllimport)
+    #define OX_API
   #else
     #define OX_API
   #endif
