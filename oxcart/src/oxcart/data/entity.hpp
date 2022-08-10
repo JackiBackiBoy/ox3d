@@ -63,12 +63,12 @@ namespace ox {
 
       inline id_t getID() const { return m_ID; }
 
-      std::shared_ptr<Model> model{};
+      std::shared_ptr<Model> model = nullptr;
       glm::vec3 color{};
 
-      static Entity createEntity() {
+      static Entity* createEntity() {
         static id_t currentId = 0;
-        return Entity{currentId++};
+        return new Entity{currentId++};
       }
     private:
       Entity(id_t id);

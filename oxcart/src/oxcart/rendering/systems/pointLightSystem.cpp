@@ -1,4 +1,4 @@
-#include "oxcart/rendering/systems/renderSystem.hpp"
+#include "oxcart/rendering/systems/pointLightSystem.hpp"
 #include "oxcart/components/transform.hpp"
 
 #define GLM_FORCE_RADIANS
@@ -10,30 +10,30 @@
 #include <iostream>
 
 namespace ox {
-  RenderSystem::RenderSystem(GraphicsDevice& device, VkRenderPass renderPass,
+  PointLightSystem::PointLightSystem(GraphicsDevice& device, VkRenderPass renderPass,
       std::vector<VkDescriptorSetLayout>& setLayouts)
       : m_Device{device} {
     createPipelineLayout(setLayouts);
     createPipeline(renderPass);
   }
 
-  RenderSystem::~RenderSystem() {
+  PointLightSystem::~PointLightSystem() {
     vkDestroyPipelineLayout(m_Device.device(), m_PipelineLayout, nullptr);
   }
 
-  void RenderSystem::createPipelineLayout(std::vector<VkDescriptorSetLayout>& setLayouts) {
+  void PointLightSystem::createPipelineLayout(std::vector<VkDescriptorSetLayout>& setLayouts) {
     // Push constants
-    VkPushConstantRange pushConstantRange{};
-    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-    pushConstantRange.offset = 0;
-    pushConstantRange.size = sizeof(SimplePushConstantData);
+    //VkPushConstantRange pushConstantRange{};
+    //pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+    //pushConstantRange.offset = 0;
+    //pushConstantRange.size = sizeof(SimplePushConstantData);
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(setLayouts.size());
     pipelineLayoutInfo.pSetLayouts = setLayouts.data();
-    pipelineLayoutInfo.pushConstantRangeCount = 1;
-    pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
+    pipelineLayoutInfo.pushConstantRangeCount = 0;
+    pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
     if (vkCreatePipelineLayout(
           m_Device.device(),
@@ -44,21 +44,23 @@ namespace ox {
     }
   }
 
-  void RenderSystem::createPipeline(VkRenderPass renderPass) {
+  void PointLightSystem::createPipeline(VkRenderPass renderPass) {
     assert(m_PipelineLayout != nullptr && "VULKAN ASSERTION FAILED: Cannot create pipeline before pipeline layout!");
 
     PipelineConfigInfo pipelineConfig{};
     GraphicsPipeline::defaultPipelineConfigInfo(pipelineConfig);
+    pipelineConfig.attributeDescriptions.clear();
+    pipelineConfig.bindingDescriptions.clear();
     pipelineConfig.renderPass = renderPass;
     pipelineConfig.pipelineLayout = m_PipelineLayout;
     m_Pipeline = std::make_unique<GraphicsPipeline>(
         m_Device,
-        "assets/shaders/lightingShader.vert.spv",
-        "assets/shaders/lightingShader.frag.spv",
+        "assets/shaders/pointLight.vert.spv",
+        "assets/shaders/pointLight.frag.spv",
         pipelineConfig);
   }
 
-  void RenderSystem::renderEntities(FrameInfo& frameInfo, std::vector<Entity*>& entities) {
+  void PointLightSystem::render(FrameInfo& frameInfo) {
     m_Pipeline->bind(frameInfo.commandBuffer);
 
     // Binding of descriptor sets (ubo, texture samplers)
@@ -73,24 +75,6 @@ namespace ox {
         0,
         nullptr);
 
-    for (auto& ent: entities) {
-      if (ent->model != nullptr) {
-
-        SimplePushConstantData push{};
-        push.modelMatrix = ent->getComponent<Transform>()->mat4();
-        push.normalMatrix = ent->getComponent<Transform>()->normalMatrix();
-
-        vkCmdPushConstants(
-            frameInfo.commandBuffer,
-            m_PipelineLayout,
-            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-            0,
-            sizeof(SimplePushConstantData),
-            &push);
-
-        ent->model->bind(frameInfo.commandBuffer);
-        ent->model->draw(frameInfo.commandBuffer, m_PipelineLayout);
-      }
-    }
+    vkCmdDraw(frameInfo.commandBuffer, 6, 1, 0, 0);
   }
 }

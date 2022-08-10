@@ -1,16 +1,30 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 set(NAME oxcart)
+set(MINGW_PATH C:/msys64/mingw64)
+
+message(STATUS "Using ${CMAKE_GENERATOR}")
+if (CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
+  if (NOT MINGW_PATH)
+    message(FATAL_ERROR "MINGW_PATH not set!")
+  endif()
+  
+  set(USE_MINGW "True")
+  set(CMAKE_C_COMPILER ${MINGW_PATH}/bin/gcc.exe)
+  set(CMAKE_CXX_COMPILER ${MINGW_PATH}/bin/g++.exe)
+endif()
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(BUILD_SHARED_LIBS TRUE)
 
 set(ENGINE_SOURCE_DIR ${CMAKE_HOME_DIRECTORY}/${NAME}/src)
 include_directories(${ENGINE_SOURCE_DIR})
+
+
 
 if (WIN32)
   set(GLFW_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/GLFW/windows)
@@ -18,7 +32,7 @@ if (WIN32)
   set(GLM_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/GLM)
   set(ASSIMP_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/assimp/windows)
   set(FREETYPE_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/freetype/windows)
-  set(IMGUI_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/imgui/)
+  set(IMGUI_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/imgui)
 elseif(APPLE)
   set(FREETYPE_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/freetype/macOS)
 endif()
@@ -111,8 +125,8 @@ file(GLOB_RECURSE HEADER_FILES ${CMAKE_HOME_DIRECTORY}/${NAME}/*.hpp)
 add_library(${NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES})
 
 # Eliminate target prefixes
-set_target_properties(${NAME} PROPERTIES PREFIX "")
-set_target_properties(${NAME} PROPERTIES IMPORT_PREFIX "")
+set_target_properties(${NAME} PROPERTIES PREFIX "lib")
+set_target_properties(${NAME} PROPERTIES IMPORT_PREFIX "sym")
 
 # Standard c++ version
 target_compile_features(${NAME} PUBLIC cxx_std_17)

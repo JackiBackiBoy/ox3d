@@ -11,22 +11,17 @@
 #include <vector>
 
 namespace ox {
-  struct OX_API SimplePushConstantData {
-    glm::mat4 modelMatrix{1.0f};
-    glm::mat4 normalMatrix{1.0f};
-  };
-  
-  class OX_API RenderSystem {
+  class OX_API PointLightSystem {
     public:
-      RenderSystem(GraphicsDevice& device, VkRenderPass renderPass,
+      PointLightSystem(GraphicsDevice& device, VkRenderPass renderPass,
           std::vector<VkDescriptorSetLayout>& setLayouts);
-      ~RenderSystem();
+      ~PointLightSystem();
 
       // Delete copy constructors
-      RenderSystem(const RenderSystem&) = delete;
-      RenderSystem& operator=(const RenderSystem&) = delete;
+      PointLightSystem(const PointLightSystem&) = delete;
+      PointLightSystem& operator=(const PointLightSystem&) = delete;
 
-      void renderEntities(FrameInfo& frameInfo, std::vector<Entity*>& entities);
+      void render(FrameInfo& frameInfo);
     private:
       void createPipelineLayout(std::vector<VkDescriptorSetLayout>& setLayouts);
       void createPipeline(VkRenderPass renderPass);

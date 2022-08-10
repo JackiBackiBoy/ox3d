@@ -1,5 +1,6 @@
 #include "oxcart/core/application.hpp"
 #include "oxcart/rendering/systems/renderSystem.hpp"
+#include "oxcart/rendering/systems/pointLightSystem.hpp"
 #include "oxcart/rendering/buffer.hpp"
 #include "oxcart/components/camera.hpp"
 #include "oxcart/components/transform.hpp"
@@ -98,6 +99,11 @@ namespace ox {
       m_Renderer.getSwapChainRenderPass(),
       setLayouts };
 
+    PointLightSystem pointLightSystem {
+      m_Device,
+      m_Renderer.getSwapChainRenderPass(),
+      setLayouts };
+
     float dt = 0.0f;
     float lastAspectRatio = 0;
     auto currentTime = std::chrono::high_resolution_clock::now();
@@ -141,6 +147,7 @@ namespace ox {
         // Render
         m_Renderer.beginSwapChainRenderPass(commandBuffer);
         renderSystem.renderEntities(frameInfo, m_Entities);
+        pointLightSystem.render(frameInfo);
         m_Renderer.endSwapChainRenderPass(commandBuffer);
         m_Renderer.endFrame();
       }

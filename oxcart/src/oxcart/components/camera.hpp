@@ -13,9 +13,6 @@ namespace ox {
     public:
       Camera();
 
-      void onStart() override {};
-      void onUpdate(const float& deltaTime) override {};
-
       void setPerspective(
           const float& fov,
           const float& aspectRatio,

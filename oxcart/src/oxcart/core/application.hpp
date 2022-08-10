@@ -36,7 +36,7 @@ namespace ox {
       Renderer m_Renderer{m_Window, m_Device};
 
       std::unique_ptr<DescriptorPool> globalPool{};
-      std::vector<Entity> m_Entities;
+      std::vector<Entity*> m_Entities;
 
     private:
       glm::vec2 lastMousePos;
