@@ -153,7 +153,7 @@ if (WIN32)
     ${FREETYPE_LIBRARIES}
   )
 
-  target_link_libraries(${NAME} glfw3 vulkan-1 libassimp freetype)
+  target_link_libraries(${NAME} libglfw3 vulkan-1 libassimp freetype)
 elseif (APPLE)
   message(STATUS "Creating build for macOS!")
   message(STATUS "Vulkan include dir: " ${Vulkan_INCLUDE_DIRS})
