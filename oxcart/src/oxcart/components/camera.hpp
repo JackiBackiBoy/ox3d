@@ -19,8 +19,9 @@ namespace ox {
           const float& near,
           const float& far);
 
-      inline const glm::mat4& getProjection() const { return m_ProjectionMatrix; }
-      inline const glm::mat4& getView() const { return m_ViewMatrix; }
+      const glm::mat4& getProjection() const;
+      const glm::mat4& getView() const;
+      const glm::mat4& getInverseView() const;
 
       // Getters
       inline glm::vec3 getForward() const { return m_Forward; }
@@ -33,10 +34,12 @@ namespace ox {
       void setYaw(const float& yaw);
       void setPitch(const float& pitch);
       void setRoll(const float& roll);
+      void onUpdate(glm::vec3 position);
 
       glm::vec3 rotation{};
-      glm::mat4 m_ProjectionMatrix{1.0f};
-      glm::mat4 m_ViewMatrix{1.0f};
+      glm::mat4 m_ProjectionMatrix{ 1.0f };
+      glm::mat4 m_ViewMatrix{ 1.0f };
+      glm::mat4 m_InverseViewMatrix{ 1.0f };
 
       static Camera* current;
 

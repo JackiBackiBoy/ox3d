@@ -21,6 +21,7 @@ namespace ox {
       PointLightSystem(const PointLightSystem&) = delete;
       PointLightSystem& operator=(const PointLightSystem&) = delete;
 
+      void onUpdate(FrameInfo& frameInfo, GlobalUBO& ubo);
       void render(FrameInfo& frameInfo);
     private:
       void createPipelineLayout(std::vector<VkDescriptorSetLayout>& setLayouts);

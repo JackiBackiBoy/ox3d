@@ -242,8 +242,8 @@ namespace ox {
       m_Vertices.push_back(
           { glm::vec3(position.x, position.y, position.z),
             glm::vec3(normal.x, normal.y, normal.z),
-            glm::vec3(tangent.x, tangent.y, tangent.z),
-            glm::vec3(bitangent.x, bitangent.y, bitangent.z),
+            glm::vec3(0.0f, 0.0f, 0.0f),
+            glm::vec3(0.0f, 0.0f, 0.0f),
             glm::vec2(texCoord.x, texCoord.y) });
     }
 

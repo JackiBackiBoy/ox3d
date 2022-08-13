@@ -31,10 +31,7 @@ if (WIN32)
   set(VULKAN_SDK_PATH C:/VulkanSDK/1.3.204.0)
   set(GLM_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/GLM)
   set(ASSIMP_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/assimp/windows)
-  set(FREETYPE_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/freetype/windows)
-  set(IMGUI_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/imgui)
 elseif(APPLE)
-  set(FREETYPE_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/freetype/macOS)
 endif()
 
 set(STB_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/stb)
@@ -62,12 +59,11 @@ if (DEFINED GLFW_PATH)
   # Check the desired library
   if (MSVC)
     message(STATUS "Using Visual Studio generator")
-    set(GLFW_LIB "${GLFW_PATH}/lib-vc2019")
+    set(GLFW_LIB "${GLFW_PATH}/lib-vc2022")
   else()
     message(STATUS "Using MinGW generator")
     set(GLFW_LIB "${GLFW_PATH}/lib-mingw-w64")
   endif()
-
 else()
   find_package(glfw3 3.3 REQUIRED)
   set(GLFW_LIB glfw)
@@ -84,7 +80,7 @@ if (DEFINED ASSIMP_PATH)
   set(ASSIMP_INCLUDE_DIR "${ASSIMP_PATH}/include")
 
   if (MSVC)
-    set(ASSIMP_LIBRARIES "${ASSIMP_PATH}/lib-vc2019")
+    set(ASSIMP_LIBRARIES "${ASSIMP_PATH}/lib-vc2022")
   else()
     set(ASSIMP_LIBRARIES "${ASSIMP_PATH}/lib-mingw-w64")
   endif()
@@ -99,22 +95,6 @@ if (ASSIMP_FOUND)
   message(STATUS "Using Assimp lib at: ${ASSIMP_LIBRARIES}")
 else()
   message(STATUS "Could not find Assimp library!")
-endif()
-
-# 4. Find Freetype
-if (DEFINED FREETYPE_PATH)
-  set(FREETYPE_INCLUDE_DIR "${FREETYPE_PATH}/include")
-  set(FREETYPE_LIBRARIES "${FREETYPE_PATH}/lib")
-  set(FREETYPE_FOUND "True")
-else()
-  find_package(Freetype REQUIRED)
-endif()
-
-if (FREETYPE_FOUND)
-  message(STATUS "Found Freetype at: ${FREETYPE_INCLUDE_DIR}")
-  message(STATUS "Found Freetype lib at: ${FREETYPE_LIBRARIES}")
-else()
-  message(STATUS "Could not find Freetype library!")
 endif()
 
 # Retrieve all source and header files
@@ -140,8 +120,6 @@ if (WIN32)
     ${GLFW_INCLUDE_DIRS}
     ${Vulkan_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIR}
-    ${FREETYPE_INCLUDE_DIR}
-    ${IMGUI_PATH}
     ${GLM_PATH}/include
     ${STB_PATH}
   )
@@ -150,10 +128,9 @@ if (WIN32)
     ${GLFW_LIB}
     ${Vulkan_LIBRARIES}
     ${ASSIMP_LIBRARIES}
-    ${FREETYPE_LIBRARIES}
   )
 
-  target_link_libraries(${NAME} libglfw3 vulkan-1 libassimp freetype)
+  target_link_libraries(${NAME} glfw3 vulkan-1 assimp)
 elseif (APPLE)
   message(STATUS "Creating build for macOS!")
   message(STATUS "Vulkan include dir: " ${Vulkan_INCLUDE_DIRS})
@@ -161,15 +138,13 @@ elseif (APPLE)
   target_include_directories(${NAME} PUBLIC
     ${Vulkan_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIR}
-    ${FREETYPE_INCLUDE_DIR}
     ${STB_PATH}
   )
 
   target_link_directories(${NAME} PUBLIC
-    ${FREETYPE_LIBRARIES}
   )
 
-  target_link_libraries(${NAME} glfw ${Vulkan_LIBRARIES} ${ASSIMP_LIBRARIES} libfreetype.dylib)
+  target_link_libraries(${NAME} glfw ${Vulkan_LIBRARIES} ${ASSIMP_LIBRARIES})
 endif()
 
 # ------ Compiling shader files to SPIRV format ------

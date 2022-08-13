@@ -18,14 +18,6 @@
 #include "oxcart/input/mouse.hpp"
 
 namespace ox {
-  struct GlobalUBO {
-    glm::mat4 projection{1.0f};
-    glm::mat4 view{1.0f};
-    glm::vec4 ambientLightColor{1.0f, 1.0f, 1.0f, 0.02f}; // w is intensity
-    glm::vec3 lightPosition{-2.0f, 3.0f, -1.0f};
-    alignas(16) glm::vec4 lightColor{1.0f}; // w is intensity
-  };
-
   Application::Application() {
     globalPool = DescriptorPool::Builder(m_Device)
       .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT) // number of descriptor sets
@@ -134,13 +126,17 @@ namespace ox {
           dt,
           commandBuffer,
           *Camera::current,
-          descriptorSets
+          descriptorSets,
+          m_Entities
         };
 
         // Update
         GlobalUBO ubo{};
         ubo.projection = Camera::current->getProjection();
         ubo.view = Camera::current->getView();
+        ubo.inverseView = Camera::current->getInverseView();
+
+        pointLightSystem.onUpdate(frameInfo, ubo);
         uboBuffers[frameIndex]->writeToBuffer(&ubo);
         uboBuffers[frameIndex]->flush();
         

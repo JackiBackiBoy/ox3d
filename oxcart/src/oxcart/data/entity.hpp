@@ -61,6 +61,12 @@ namespace ox {
         return static_cast<T*>(result->second);
       }
 
+      template <class T>
+      bool hasComponent() {
+        auto result = m_Components.find(std::type_index(typeid(T)));
+        return result != m_Components.end();
+      }
+
       inline id_t getID() const { return m_ID; }
 
       std::shared_ptr<Model> model = nullptr;

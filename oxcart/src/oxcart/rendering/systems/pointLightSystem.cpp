@@ -1,5 +1,6 @@
 #include "oxcart/rendering/systems/pointLightSystem.hpp"
 #include "oxcart/components/transform.hpp"
+#include "oxcart/components/light.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -10,6 +11,12 @@
 #include <iostream>
 
 namespace ox {
+  struct PointLightPushConstants {
+    glm::vec4 position{};
+    glm::vec4 color{};
+    float radius;
+  };
+
   PointLightSystem::PointLightSystem(GraphicsDevice& device, VkRenderPass renderPass,
       std::vector<VkDescriptorSetLayout>& setLayouts)
       : m_Device{device} {
@@ -23,17 +30,17 @@ namespace ox {
 
   void PointLightSystem::createPipelineLayout(std::vector<VkDescriptorSetLayout>& setLayouts) {
     // Push constants
-    //VkPushConstantRange pushConstantRange{};
-    //pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-    //pushConstantRange.offset = 0;
-    //pushConstantRange.size = sizeof(SimplePushConstantData);
+    VkPushConstantRange pushConstantRange{};
+    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+    pushConstantRange.offset = 0;
+    pushConstantRange.size = sizeof(PointLightPushConstants);
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(setLayouts.size());
     pipelineLayoutInfo.pSetLayouts = setLayouts.data();
-    pipelineLayoutInfo.pushConstantRangeCount = 0;
-    pipelineLayoutInfo.pPushConstantRanges = nullptr;
+    pipelineLayoutInfo.pushConstantRangeCount = 1;
+    pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
     if (vkCreatePipelineLayout(
           m_Device.device(),
@@ -60,6 +67,22 @@ namespace ox {
         pipelineConfig);
   }
 
+  void PointLightSystem::onUpdate(FrameInfo& frameInfo, GlobalUBO& ubo)
+  {
+    int lightIndex = 0;
+
+    for (auto& ent : frameInfo.entities) {
+      if (!ent->hasComponent<Light>()) continue;
+
+      auto lightComponent = ent->getComponent<Light>();
+      ubo.pointLights[lightIndex].position = glm::vec4(ent->getComponent<Transform>()->position, 0.0f);
+      ubo.pointLights[lightIndex].color = glm::vec4(lightComponent->color, lightComponent->intensity);
+      lightIndex++;
+    }
+
+    ubo.numLights = lightIndex;
+  }
+
   void PointLightSystem::render(FrameInfo& frameInfo) {
     m_Pipeline->bind(frameInfo.commandBuffer);
 
@@ -75,6 +98,26 @@ namespace ox {
         0,
         nullptr);
 
-    vkCmdDraw(frameInfo.commandBuffer, 6, 1, 0, 0);
+    for (auto& ent : frameInfo.entities) {
+      if (!ent->hasComponent<Light>()) { continue; }
+
+      auto lightComponent = ent->getComponent<Light>();
+
+      PointLightPushConstants push{};
+      push.position = glm::vec4(ent->getComponent<Transform>()->position, 0.0f);
+      push.color = glm::vec4(lightComponent->color, lightComponent->intensity);
+      push.radius = lightComponent->radius;
+
+      vkCmdPushConstants(
+        frameInfo.commandBuffer,
+        m_PipelineLayout,
+        VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+        0,
+        sizeof(PointLightPushConstants),
+        &push
+      );
+
+      vkCmdDraw(frameInfo.commandBuffer, 6, 1, 0, 0);
+    }
   }
 }

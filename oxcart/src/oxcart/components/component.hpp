@@ -12,6 +12,6 @@ namespace ox {
       void bindToEntity(Entity* entity) { m_Entity = entity; }
 
     protected:
-      Entity* m_Entity;
+      Entity* m_Entity = nullptr;
   };
 }
