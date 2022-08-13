@@ -8,5 +8,7 @@ vs-build
 
 # Other
 *.spv # binary shader files
+
+# macOS
 .DS_Store
 **/.DS_Store # macOS metadata file
