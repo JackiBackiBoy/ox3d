@@ -58,7 +58,7 @@ namespace ox {
         pipelineConfig);
   }
 
-  void RenderSystem::renderEntities(FrameInfo& frameInfo, std::vector<Entity>& entities) {
+  void RenderSystem::renderEntities(FrameInfo& frameInfo, std::vector<Entity*>& entities) {
     m_Pipeline->bind(frameInfo.commandBuffer);
 
     // Binding of descriptor sets (ubo, texture samplers)
@@ -74,20 +74,23 @@ namespace ox {
         nullptr);
 
     for (auto& ent: entities) {
-      SimplePushConstantData push{};
-      push.modelMatrix = ent.getComponent<Transform>()->mat4();
-      push.normalMatrix = ent.getComponent<Transform>()->normalMatrix();
+      if (ent->model != nullptr) {
 
-      vkCmdPushConstants(
-          frameInfo.commandBuffer,
-          m_PipelineLayout,
-          VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-          0,
-          sizeof(SimplePushConstantData),
-          &push);
+        SimplePushConstantData push{};
+        push.modelMatrix = ent->getComponent<Transform>()->mat4();
+        push.normalMatrix = ent->getComponent<Transform>()->normalMatrix();
 
-      ent.model->bind(frameInfo.commandBuffer);
-      ent.model->draw(frameInfo.commandBuffer, m_PipelineLayout);
+        vkCmdPushConstants(
+            frameInfo.commandBuffer,
+            m_PipelineLayout,
+            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+            0,
+            sizeof(SimplePushConstantData),
+            &push);
+
+        ent->model->bind(frameInfo.commandBuffer);
+        ent->model->draw(frameInfo.commandBuffer, m_PipelineLayout);
+      }
     }
   }
 }

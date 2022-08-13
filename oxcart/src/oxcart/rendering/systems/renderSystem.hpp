@@ -26,7 +26,7 @@ namespace ox {
       RenderSystem(const RenderSystem&) = delete;
       RenderSystem& operator=(const RenderSystem&) = delete;
 
-      void renderEntities(FrameInfo& frameInfo, std::vector<Entity>& entities);
+      void renderEntities(FrameInfo& frameInfo, std::vector<Entity*>& entities);
     private:
       void createPipelineLayout(std::vector<VkDescriptorSetLayout>& setLayouts);
       void createPipeline(VkRenderPass renderPass);

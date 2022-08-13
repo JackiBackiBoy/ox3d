@@ -1,10 +1,12 @@
 #pragma once
 
+
+#include "oxcart/core/core.hpp"
 #include "oxcart/main.hpp"
-#include "imgui.h"
 
 // Components
 #include "oxcart/components/camera.hpp"
+#include "oxcart/components/light.hpp"
 #include "oxcart/components/transform.hpp"
 
 // Data

@@ -1,5 +1,6 @@
 #include "oxcart/core/application.hpp"
 #include "oxcart/rendering/systems/renderSystem.hpp"
+#include "oxcart/rendering/systems/pointLightSystem.hpp"
 #include "oxcart/rendering/buffer.hpp"
 #include "oxcart/components/camera.hpp"
 #include "oxcart/components/transform.hpp"
@@ -17,14 +18,6 @@
 #include "oxcart/input/mouse.hpp"
 
 namespace ox {
-  struct GlobalUBO {
-    glm::mat4 projection{1.0f};
-    glm::mat4 view{1.0f};
-    glm::vec4 ambientLightColor{1.0f, 1.0f, 1.0f, 0.02f}; // w is intensity
-    glm::vec3 lightPosition{-2.0f, 3.0f, -1.0f};
-    alignas(16) glm::vec4 lightColor{1.0f}; // w is intensity
-  };
-
   Application::Application() {
     globalPool = DescriptorPool::Builder(m_Device)
       .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT) // number of descriptor sets
@@ -98,6 +91,11 @@ namespace ox {
       m_Renderer.getSwapChainRenderPass(),
       setLayouts };
 
+    PointLightSystem pointLightSystem {
+      m_Device,
+      m_Renderer.getSwapChainRenderPass(),
+      setLayouts };
+
     float dt = 0.0f;
     float lastAspectRatio = 0;
     auto currentTime = std::chrono::high_resolution_clock::now();
@@ -128,19 +126,24 @@ namespace ox {
           dt,
           commandBuffer,
           *Camera::current,
-          descriptorSets
+          descriptorSets,
+          m_Entities
         };
 
         // Update
         GlobalUBO ubo{};
         ubo.projection = Camera::current->getProjection();
         ubo.view = Camera::current->getView();
+        ubo.inverseView = Camera::current->getInverseView();
+
+        pointLightSystem.onUpdate(frameInfo, ubo);
         uboBuffers[frameIndex]->writeToBuffer(&ubo);
         uboBuffers[frameIndex]->flush();
         
         // Render
         m_Renderer.beginSwapChainRenderPass(commandBuffer);
         renderSystem.renderEntities(frameInfo, m_Entities);
+        pointLightSystem.render(frameInfo);
         m_Renderer.endSwapChainRenderPass(commandBuffer);
         m_Renderer.endFrame();
       }

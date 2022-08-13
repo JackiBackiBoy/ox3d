@@ -10,12 +10,18 @@ layout(location = 0) out vec2 texCoord;
 layout(location = 1) out vec3 fragPosWorld;
 layout(location = 2) out vec3 fragNormalWorld;
 
+struct PointLight {
+  vec4 position; // ignore w
+  vec4 color; // w is intensity
+};
+
 layout(set = 0, binding = 0) uniform GlobalUBO {
   mat4 projection;
   mat4 view;
+  mat4 inverseView;
   vec4 ambientLightColor; // w is intensity
-  vec3 lightPosition;
-  vec4 lightColor; // w is intensity
+  PointLight pointLights[16];
+  int numLights;
 } ubo;
 
 layout(push_constant) uniform Push {
@@ -25,12 +31,7 @@ layout(push_constant) uniform Push {
 
 void main() {
   vec4 worldPosition = push.modelMatrix * vec4(inPosition, 1.0);
-
   gl_Position = ubo.projection * ubo.view * worldPosition;
-
-  vec3 lightDirection = ubo.lightPosition - worldPosition.xyz;
-  vec3 lightColor = ubo.lightColor.xyz * ubo.lightColor.w;
-  vec3 ambientLight = ubo.ambientLightColor.xyz * ubo.ambientLightColor.w;
 
   // Out variables
   texCoord = inTexCoord;

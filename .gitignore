@@ -1,6 +1,7 @@
 # CMake
 **/.cache
 build
+vs-build
 
 # Other
 *.spv # binary shader files

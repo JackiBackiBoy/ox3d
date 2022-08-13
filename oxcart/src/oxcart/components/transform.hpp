@@ -12,8 +12,6 @@ namespace ox {
   class OX_API Transform : public Component {
     public:
       Transform() : Component() {};
-      void onStart() override {};
-      void onUpdate(const float& deltaTime) override {};
 
       glm::mat4 mat4() {
         const float c3 = glm::cos(rotation.z);

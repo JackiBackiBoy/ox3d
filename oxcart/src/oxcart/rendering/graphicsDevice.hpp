@@ -9,14 +9,14 @@
 
 namespace ox {
   struct OX_API SwapChainSupportDetails {
-    VkSurfaceCapabilitiesKHR capabilities;
+    VkSurfaceCapabilitiesKHR capabilities{};
     std::vector<VkSurfaceFormatKHR> formats;
     std::vector<VkPresentModeKHR> presentModes;
   };
 
   struct OX_API QueueFamilyIndices {
-    uint32_t graphicsFamily;
-    uint32_t presentFamily;
+    uint32_t graphicsFamily{};
+    uint32_t presentFamily{};
     bool graphicsFamilyHasValue = false;
     bool presentFamilyHasValue = false;
     bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
@@ -38,7 +38,7 @@ namespace ox {
     GraphicsDevice(const GraphicsDevice&) = delete;
     GraphicsDevice& operator=(const GraphicsDevice&) = delete;
     GraphicsDevice(GraphicsDevice&&) = delete;
-    GraphicsDevice& operator=(GraphicsDevice &&) = delete;
+    GraphicsDevice& operator=(GraphicsDevice&&) = delete;
 
     VkCommandPool getCommandPool() { return commandPool; }
     VkDevice device() { return device_; }

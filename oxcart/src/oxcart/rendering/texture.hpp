@@ -17,8 +17,8 @@ namespace ox {
 
     private:
       GraphicsDevice& m_Device;
-      VkImage m_TextureImage;
-      VkDeviceMemory m_TextureImageMemory;
-      VkImageView m_TextureImageView;
+      VkImage m_TextureImage{};
+      VkDeviceMemory m_TextureImageMemory{};
+      VkImageView m_TextureImageView{};
   };
 }
