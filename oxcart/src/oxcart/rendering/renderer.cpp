@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <array>
 #include <iostream>
+#include <imgui_impl_vulkan.h>
 
 namespace ox {
   Renderer::Renderer(Window& window, GraphicsDevice& device)
@@ -103,8 +104,9 @@ namespace ox {
     return commandBuffer;
   }
 
-  void Renderer::endFrame() {
+  bool Renderer::endFrame() {
     assert(m_IsFrameStarted && "VULKAN ASSERTION FAILED: Cannot call endFrame while frame is not in progress!");
+    bool ret = false;
 
     auto commandBuffer = getCurrentCommandBuffer();
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
@@ -117,12 +119,14 @@ namespace ox {
         m_Window.wasWindowResized()) {
       m_Window.resetWindowResizedFlag();
       recreateSwapChain();
+      ret = true;
     } else if (result != VK_SUCCESS) {
       throw std::runtime_error("VULKAN ERROR: Failed to present swap chain image!");
     }
 
     m_IsFrameStarted = false;
     m_CurrentFrameIndex = (m_CurrentFrameIndex + 1) % SwapChain::MAX_FRAMES_IN_FLIGHT;
+    return ret;
   }
 
   void Renderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {

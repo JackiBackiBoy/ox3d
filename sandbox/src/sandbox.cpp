@@ -38,32 +38,25 @@ class Sandbox : public ox::Application {
 
       // Make point lights
       light = ox::Entity::createEntity();
-      light->getComponent<ox::Transform>()->position = { 1.0f, 1.0f, -3.0f };
+      light->getComponent<ox::Transform>()->position = { 1.0f, 3.1f, -0.5f };
       auto lightComponent = light->addComponent<ox::Light>();
       lightComponent->color = { 1.0f, 1.0f, 1.0f };
       lightComponent->intensity = 0.5f;
       lightComponent->radius = 0.09f;
       m_Entities.push_back(light);
 
-      light2 = ox::Entity::createEntity();
-      light2->getComponent<ox::Transform>()->position = { 1.0f, 1.0f, -3.0f };
-      auto lightComponent2 = light2->addComponent<ox::Light>();
-      lightComponent2->color = { 1.0f, 1.0f, 1.0f };
-      lightComponent2->intensity = 0.5f;
-      lightComponent2->radius = 0.09f;
-      m_Entities.push_back(light2);
     }
 
     void onUpdate(const float& dt) override {
       static float totalTime;
       totalTime += dt;
 
-      light->getComponent<ox::Transform>()->position.x = cos(totalTime);
-      light->getComponent<ox::Transform>()->position.z = sin(totalTime);
+      //light->getComponent<ox::Transform>()->position.x = cos(totalTime);
+      //light->getComponent<ox::Transform>()->position.z = sin(totalTime);
 
-      light2->getComponent<ox::Transform>()->position.x = sin(totalTime);
-      light2->getComponent<ox::Transform>()->position.y = 1.8f;
-      light2->getComponent<ox::Transform>()->position.z = -cos(totalTime);
+      //light2->getComponent<ox::Transform>()->position.x = sin(totalTime);
+      //light2->getComponent<ox::Transform>()->position.y = 1.8f;
+      //light2->getComponent<ox::Transform>()->position.z = -cos(totalTime);
 
       // ------ Camera movement ------
       // ------ Rotation with mouse ------
@@ -79,8 +72,6 @@ class Sandbox : public ox::Application {
         firstMove = true;
       }
 
-      playerCamera->setYaw(playerCamera->getYaw() - 0.001f * deltaMousePos.x);
-      playerCamera->setPitch(playerCamera->getPitch() - 0.001f * deltaMousePos.y);
 
       // Rotations
       glm::vec3 newForward{

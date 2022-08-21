@@ -40,12 +40,14 @@ namespace ox {
     GraphicsDevice(GraphicsDevice&&) = delete;
     GraphicsDevice& operator=(GraphicsDevice&&) = delete;
 
+    Window& getWindow() { return window; }
     VkCommandPool getCommandPool() { return commandPool; }
     VkDevice device() { return device_; }
     VkPhysicalDevice getPhysicalDevice() { return physicalDevice; }
     VkSurfaceKHR surface() { return surface_; }
     VkQueue graphicsQueue() { return graphicsQueue_; }
     VkQueue presentQueue() { return presentQueue_; }
+    VkInstance getInstance() { return instance; }
 
     SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(physicalDevice); }
     uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);

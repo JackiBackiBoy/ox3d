@@ -19,6 +19,9 @@ namespace ox {
       Renderer(const Renderer&) = delete;
       Renderer& operator=(const Renderer&) = delete;
 
+      inline uint32_t getSwapChainWidth() const { return m_SwapChain->width(); }
+      inline uint32_t getSwapChainHeight() const { return m_SwapChain->height(); }
+      inline VkFormat getImageFormat() const { return m_SwapChain->getSwapChainImageFormat(); }
       inline VkRenderPass getSwapChainRenderPass() const { return m_SwapChain->getRenderPass(); }
       inline float getAspectRatio() const { return m_SwapChain->extentAspectRatio(); }
       inline bool isFrameInProgress() const { return m_IsFrameStarted; }
@@ -26,7 +29,7 @@ namespace ox {
       int getFrameIndex() const;
 
       VkCommandBuffer beginFrame();
-      void endFrame();
+      bool endFrame();
       void beginSwapChainRenderPass(VkCommandBuffer commandBuffer);
       void endSwapChainRenderPass(VkCommandBuffer commandBuffer);
     private:

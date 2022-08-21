@@ -22,7 +22,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(ENGINE_SOURCE_DIR ${CMAKE_HOME_DIRECTORY}/${NAME}/src)
-include_directories(${ENGINE_SOURCE_DIR})
+include_directories(
+  ${ENGINE_SOURCE_DIR}
+  ${CMAKE_HOME_DIRECTORY}/oxcart/src/oxcart/ui
+  ${CMAKE_HOME_DIRECTORY}/oxcart/src/oxcart/ui/backends
+)
 
 
 
@@ -35,6 +39,7 @@ elseif(APPLE)
 endif()
 
 set(STB_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/stb)
+set(IMGUI_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/imgui)
 
 # 1. Find Vulkan
 if (DEFINED VULKAN_SDK_PATH)
@@ -122,6 +127,7 @@ if (WIN32)
     ${ASSIMP_INCLUDE_DIR}
     ${GLM_PATH}/include
     ${STB_PATH}
+    ${IMGUI_PATH}
   )
 
   target_link_directories(${NAME} PUBLIC

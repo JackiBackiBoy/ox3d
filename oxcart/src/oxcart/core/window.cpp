@@ -23,7 +23,8 @@ void Window::createWindow() {
   m_RawWindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
   glfwSetWindowUserPointer(m_RawWindow, this);
   glfwSetFramebufferSizeCallback(m_RawWindow, framebufferResizeCallback);
-  glfwSetInputMode(m_RawWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwMakeContextCurrent(m_RawWindow);
+  //glfwSetInputMode(m_RawWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSetCursorPosCallback(m_RawWindow, Mouse::onMouseMove);
 
 }

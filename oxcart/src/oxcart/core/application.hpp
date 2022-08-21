@@ -6,10 +6,13 @@
 #include "oxcart/rendering/descriptors.hpp"
 #include "oxcart/rendering/graphicsDevice.hpp"
 #include "oxcart/rendering/renderer.hpp"
+#include "oxcart/rendering/systems/renderSystem.hpp"
+#include "oxcart/rendering/systems/pointLightSystem.hpp"
 
 // std
 #include <memory>
 #include <vector>
+#include <functional>
 
 namespace ox {
   class OX_API Application {
@@ -26,7 +29,7 @@ namespace ox {
 
       virtual void onStart();
       virtual void onUpdate(const float& dt);
-      virtual void onRender();
+      virtual void onRender(const float& dt);
 
       void run();
 
@@ -39,7 +42,12 @@ namespace ox {
       std::vector<Entity*> m_Entities;
 
     private:
+      VkDescriptorPool imguiPool = VK_NULL_HANDLE;
       glm::vec2 lastMousePos;
       float lastAspectRatio = 0;
+      std::vector<VkDescriptorSet> globalDescriptorSets;
+      std::vector<std::unique_ptr<Buffer>> uboBuffers;
+      std::unique_ptr<RenderSystem> renderSystem;
+      std::unique_ptr<PointLightSystem> pointLightSystem;
   };
 }
