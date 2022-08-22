@@ -35,29 +35,37 @@ include_directories(
 if (WIN32)
   set(GLFW_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/GLFW/windows)
   set(VULKAN_SDK_PATH C:/VulkanSDK/1.3.204.0)
-  set(ASSIMP_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/assimp/windows)
+  #set(ASSIMP_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/assimp/windows)
 elseif(APPLE)
 endif()
 
 set(STB_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/stb)
 set(IMGUI_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/imgui)
 
-# GLM
-# step 0
-find_path(GLM_INCLUDE_DIR "${CMAKE_HOME_DIRECTORY}/vendor/glm")
+# 1. GLM
+find_path(GLM_INCLUDE_DIR vendor/glm ${CMAKE_HOME_DIRECTORY})
 
 if((NOT GLM_INCLUDE_DIR) OR (NOT EXISTS ${GLM_INCLUDE_DIR}))
-  # we couldn't find the header files for FOO or they don't exist
-  message("Unable to find GLM. Installing it now.")
-
-  # we have a submodule setup for foo, assume it is under external/foo
-  # now we need to clone this submodule
+  message(STATUS "Unable to find GLM. Installing it now.")
   execute_process(COMMAND git submodule update --init -- ${CMAKE_HOME_DIRECTORY}/vendor/glm
                     WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY})
   
   set(GLM_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/glm)
 else()
   set(GLM_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/glm)
+endif()
+
+# 2. Asset Importer Library
+find_path(ASSIMP_INCLUDE_DIR vendor/assimp ${CMAKE_HOME_DIRECTORY})
+
+if((NOT ASSIMP_INCLUDE_DIR) OR (NOT EXISTS ${ASSIMP_INCLUDE_DIR}))
+  message(STATUS "Unable to find Assimp. Installing it now.")
+  execute_process(COMMAND git submodule update --init -- ${CMAKE_HOME_DIRECTORY}/vendor/assimp
+                    WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY})
+  
+  set(ASSIMP_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/assimp)
+else()
+  set(ASSIMP_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/assimp)
 endif()
 
 # 1. Find Vulkan
@@ -97,28 +105,6 @@ if (NOT GLFW_LIB)
   message(FATAL_ERROR "Could not find glfw library!")
 else()
   message(STATUS "Using GLFW lib at: ${GLFW_LIB}")
-endif()
-
-# 3. Find Assimp
-if (DEFINED ASSIMP_PATH)
-  set(ASSIMP_INCLUDE_DIR "${ASSIMP_PATH}/include")
-
-  if (MSVC)
-    set(ASSIMP_LIBRARIES "${ASSIMP_PATH}/lib-vc2022")
-  else()
-    set(ASSIMP_LIBRARIES "${ASSIMP_PATH}/lib-mingw-w64")
-  endif()
-
-  set(ASSIMP_FOUND "True")
-else()
-  find_package(ASSIMP REQUIRED)
-endif()
-
-if (ASSIMP_FOUND)
-  message(STATUS "Found Assimp at: ${ASSIMP_INCLUDE_DIR}")
-  message(STATUS "Using Assimp lib at: ${ASSIMP_LIBRARIES}")
-else()
-  message(STATUS "Could not find Assimp library!")
 endif()
 
 # Retrieve all source and header files
