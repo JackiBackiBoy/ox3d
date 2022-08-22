@@ -17,7 +17,5 @@ namespace ox {
       uint32_t baseVertex;
       uint32_t baseIndex;
       VkDescriptorSet m_DescriptorSet;
-
-    private:
   };
 }

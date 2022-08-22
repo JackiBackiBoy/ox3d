@@ -5,6 +5,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+// std
 #include <iostream>
 #include <memory>
 #include <typeindex>
@@ -12,7 +13,7 @@
 #include <unordered_map>
 
 namespace ox {
-  class OX_API Component;
+  class OX_API Component; // pre-definition
 
   class OX_API Entity {
     public:
@@ -78,9 +79,7 @@ namespace ox {
       }
     private:
       Entity(id_t id);
-
       std::unordered_map<std::type_index, Component*> m_Components;
-
       id_t m_ID;
   };
 }

@@ -40,18 +40,18 @@ namespace ox {
     GraphicsDevice(GraphicsDevice&&) = delete;
     GraphicsDevice& operator=(GraphicsDevice&&) = delete;
 
-    Window& getWindow() { return window; }
-    VkCommandPool getCommandPool() { return commandPool; }
-    VkDevice device() { return device_; }
-    VkPhysicalDevice getPhysicalDevice() { return physicalDevice; }
-    VkSurfaceKHR surface() { return surface_; }
-    VkQueue graphicsQueue() { return graphicsQueue_; }
-    VkQueue presentQueue() { return presentQueue_; }
-    VkInstance getInstance() { return instance; }
+    Window& getWindow() { return m_Window; }
+    VkCommandPool getCommandPool() { return m_CommandPool; }
+    VkDevice device() { return m_Device; }
+    VkPhysicalDevice getPhysicalDevice() { return m_PhysicalDevice; }
+    VkSurfaceKHR surface() { return m_Surface; }
+    VkQueue graphicsQueue() { return m_GraphicsQueue; }
+    VkQueue presentQueue() { return m_PresentQueue; }
+    VkInstance getInstance() { return m_Instance; }
 
-    SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(physicalDevice); }
+    SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(m_PhysicalDevice); }
     uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-    QueueFamilyIndices findPhysicalQueueFamilies() { return findQueueFamilies(physicalDevice); }
+    QueueFamilyIndices findPhysicalQueueFamilies() { return findQueueFamilies(m_PhysicalDevice); }
     VkFormat findSupportedFormat(
         const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
@@ -100,18 +100,18 @@ namespace ox {
     bool checkDeviceExtensionSupport(VkPhysicalDevice device);
     SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
-    VkInstance instance;
-    VkDebugUtilsMessengerEXT debugMessenger;
-    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-    Window &window;
-    VkCommandPool commandPool;
+    VkInstance m_Instance;
+    VkDebugUtilsMessengerEXT m_DebugMessenger;
+    VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
+    Window &m_Window;
+    VkCommandPool m_CommandPool;
 
-    VkDevice device_;
-    VkSurfaceKHR surface_;
-    VkQueue graphicsQueue_;
-    VkQueue presentQueue_;
+    VkDevice m_Device;
+    VkSurfaceKHR m_Surface;
+    VkQueue m_GraphicsQueue;
+    VkQueue m_PresentQueue;
 
-    const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
-    const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+    const std::vector<const char*> m_ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
+    const std::vector<const char*> m_DeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
   };
 }

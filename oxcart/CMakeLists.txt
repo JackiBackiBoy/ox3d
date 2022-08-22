@@ -121,6 +121,8 @@ target_compile_features(${NAME} PUBLIC cxx_std_17)
 target_compile_definitions(${NAME} PRIVATE
   OX_BUILD_LIB
   ENGINE_DIR="${CMAKE_HOME_DIRECTORY}/"
+  GLM_FORCE_RADIANS
+  GLM_FORCE_DEPTH_ZERO_TO_ONE
 )
 
 if (WIN32)

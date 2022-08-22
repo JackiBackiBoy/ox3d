@@ -16,8 +16,8 @@ namespace ox {
   }
 
   GraphicsPipeline::~GraphicsPipeline() {
-    vkDestroyShaderModule(m_Device.device(), vertShaderModule, nullptr);
-    vkDestroyShaderModule(m_Device.device(), fragShaderModule, nullptr);
+    vkDestroyShaderModule(m_Device.device(), m_VertShaderModule, nullptr);
+    vkDestroyShaderModule(m_Device.device(), m_FragShaderModule, nullptr);
     vkDestroyPipeline(m_Device.device(), m_GraphicsPipeline, nullptr);
   }
 
@@ -37,14 +37,14 @@ namespace ox {
     auto vertCode = readFile(vertPath);
     auto fragCode = readFile(fragPath);
 
-    createShaderModule(vertCode, &vertShaderModule);
-    createShaderModule(fragCode, &fragShaderModule);
+    createShaderModule(vertCode, &m_VertShaderModule);
+    createShaderModule(fragCode, &m_FragShaderModule);
 
 
     VkPipelineShaderStageCreateInfo shaderStages[2];
     shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-    shaderStages[0].module = vertShaderModule;
+    shaderStages[0].module = m_VertShaderModule;
     shaderStages[0].pName = "main";
     shaderStages[0].flags = 0;
     shaderStages[0].pNext = nullptr;
@@ -52,7 +52,7 @@ namespace ox {
 
     shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    shaderStages[1].module = fragShaderModule;
+    shaderStages[1].module = m_FragShaderModule;
     shaderStages[1].pName = "main";
     shaderStages[1].flags = 0;
     shaderStages[1].pNext = nullptr;

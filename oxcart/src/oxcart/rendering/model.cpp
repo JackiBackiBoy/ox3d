@@ -119,47 +119,47 @@ namespace ox {
       allocInfos[i].pSetLayouts = layouts;
     }
 
-    writes.resize(m_Meshes.size() * 2);
-    imageInfos.resize(m_Meshes.size() * 2);
+    m_Writes.resize(m_Meshes.size() * 2);
+    m_ImageInfos.resize(m_Meshes.size() * 2);
 
     for (size_t i = 0; i < m_Meshes.size(); i++) {
       size_t iDiff = i * 2;
       size_t iNorm = i * 2 + 1;
 
       // Specify diffuse map image info
-      imageInfos[iDiff] = {};
-      imageInfos[iDiff].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-      imageInfos[iDiff].imageView = *m_DiffuseTextures[m_Meshes[i].materialIndex]->getImageView();
-      imageInfos[iDiff].sampler = SwapChain::m_TextureSampler;
+      m_ImageInfos[iDiff] = {};
+      m_ImageInfos[iDiff].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+      m_ImageInfos[iDiff].imageView = *m_DiffuseTextures[m_Meshes[i].materialIndex]->getImageView();
+      m_ImageInfos[iDiff].sampler = SwapChain::m_TextureSampler;
 
       // Specify normal map image info
-      imageInfos[iNorm] = {};
-      imageInfos[iNorm].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-      imageInfos[iNorm].imageView = *m_NormalTextures[m_Meshes[i].materialIndex]->getImageView();
-      imageInfos[iNorm].sampler = SwapChain::m_TextureSampler;
+      m_ImageInfos[iNorm] = {};
+      m_ImageInfos[iNorm].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+      m_ImageInfos[iNorm].imageView = *m_NormalTextures[m_Meshes[i].materialIndex]->getImageView();
+      m_ImageInfos[iNorm].sampler = SwapChain::m_TextureSampler;
 
       vkAllocateDescriptorSets(m_Device.device(), &allocInfos[i], &m_Meshes[i].m_DescriptorSet);
 
       // Write diffuse map data
-      writes[iDiff] = {};
-      writes[iDiff].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-      writes[iDiff].dstSet = m_Meshes[i].m_DescriptorSet;
-      writes[iDiff].descriptorCount = 1;
-      writes[iDiff].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-      writes[iDiff].pImageInfo = &imageInfos[iDiff];
-      writes[iDiff].dstBinding = 0;
+      m_Writes[iDiff] = {};
+      m_Writes[iDiff].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      m_Writes[iDiff].dstSet = m_Meshes[i].m_DescriptorSet;
+      m_Writes[iDiff].descriptorCount = 1;
+      m_Writes[iDiff].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+      m_Writes[iDiff].pImageInfo = &m_ImageInfos[iDiff];
+      m_Writes[iDiff].dstBinding = 0;
 
       // Write normal map data
-      writes[iNorm] = {};
-      writes[iNorm].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-      writes[iNorm].dstSet = m_Meshes[i].m_DescriptorSet;
-      writes[iNorm].descriptorCount = 1;
-      writes[iNorm].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-      writes[iNorm].pImageInfo = &imageInfos[iNorm];
-      writes[iNorm].dstBinding = 1;
+      m_Writes[iNorm] = {};
+      m_Writes[iNorm].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      m_Writes[iNorm].dstSet = m_Meshes[i].m_DescriptorSet;
+      m_Writes[iNorm].descriptorCount = 1;
+      m_Writes[iNorm].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+      m_Writes[iNorm].pImageInfo = &m_ImageInfos[iNorm];
+      m_Writes[iNorm].dstBinding = 1;
     }
 
-    vkUpdateDescriptorSets(m_Device.device(), writes.size(), writes.data(), 0, NULL);
+    vkUpdateDescriptorSets(m_Device.device(), m_Writes.size(), m_Writes.data(), 0, NULL);
   }
 
   void Model::loadFromFile(const std::string& path) {

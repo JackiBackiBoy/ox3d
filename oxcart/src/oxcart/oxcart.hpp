@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "oxcart/core/core.hpp"
 #include "oxcart/main.hpp"
 
@@ -18,4 +17,3 @@
 
 // Rendering
 #include "oxcart/rendering/model.hpp"
-

@@ -3,8 +3,6 @@
 #include "oxcart/core/core.hpp"
 #include <GLFW/glfw3.h>
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 
 namespace ox {
@@ -28,9 +26,9 @@ namespace ox {
       Mouse() {};
       ~Mouse() {};
 
-      static float posX;
-      static float posY;
-      static float scrollX;
-      static float scrollY;
+      static float m_PosX;
+      static float m_PosY;
+      static float m_ScrollX;
+      static float m_ScrollY;
   };
 }

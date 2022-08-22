@@ -31,28 +31,28 @@ namespace ox {
     VkDescriptorBufferInfo descriptorInfoForIndex(int index);
     VkResult invalidateIndex(int index);
    
-    VkBuffer getBuffer() const { return buffer; }
-    void* getMappedMemory() const { return mapped; }
-    uint32_t getInstanceCount() const { return instanceCount; }
-    VkDeviceSize getInstanceSize() const { return instanceSize; }
-    VkDeviceSize getAlignmentSize() const { return instanceSize; }
-    VkBufferUsageFlags getUsageFlags() const { return usageFlags; }
-    VkMemoryPropertyFlags getMemoryPropertyFlags() const { return memoryPropertyFlags; }
-    VkDeviceSize getBufferSize() const { return bufferSize; }
+    VkBuffer getBuffer() const { return m_Buffer; }
+    void* getMappedMemory() const { return m_Mapped; }
+    uint32_t getInstanceCount() const { return m_InstanceCount; }
+    VkDeviceSize getInstanceSize() const { return m_InstanceSize; }
+    VkDeviceSize getAlignmentSize() const { return m_InstanceSize; }
+    VkBufferUsageFlags getUsageFlags() const { return m_UsageFlags; }
+    VkMemoryPropertyFlags getMemoryPropertyFlags() const { return m_MemoryPropertyFlags; }
+    VkDeviceSize getBufferSize() const { return m_BufferSize; }
    
    private:
     static VkDeviceSize getAlignment(VkDeviceSize instanceSize, VkDeviceSize minOffsetAlignment);
    
-    GraphicsDevice& lveDevice;
-    void* mapped = nullptr;
-    VkBuffer buffer = VK_NULL_HANDLE;
-    VkDeviceMemory memory = VK_NULL_HANDLE;
+    GraphicsDevice& m_Device;
+    void* m_Mapped = nullptr;
+    VkBuffer m_Buffer = VK_NULL_HANDLE;
+    VkDeviceMemory m_Memory = VK_NULL_HANDLE;
    
-    VkDeviceSize bufferSize;
-    uint32_t instanceCount;
-    VkDeviceSize instanceSize;
-    VkDeviceSize alignmentSize;
-    VkBufferUsageFlags usageFlags;
-    VkMemoryPropertyFlags memoryPropertyFlags;
+    VkDeviceSize m_BufferSize;
+    uint32_t m_InstanceCount;
+    VkDeviceSize m_InstanceSize;
+    VkDeviceSize m_AlignmentSize;
+    VkBufferUsageFlags m_UsageFlags;
+    VkMemoryPropertyFlags m_MemoryPropertyFlags;
   };
 }

@@ -13,15 +13,15 @@ namespace ox {
 
     std::vector<VkVertexInputBindingDescription> bindingDescriptions;
     std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
-    VkPipelineViewportStateCreateInfo viewportInfo;
-    VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
-    VkPipelineRasterizationStateCreateInfo rasterizationInfo;
-    VkPipelineMultisampleStateCreateInfo multisampleInfo;
-    VkPipelineColorBlendAttachmentState colorBlendAttachment;
-    VkPipelineColorBlendStateCreateInfo colorBlendInfo;
-    VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
-    std::vector<VkDynamicState> dynamicStateEnables;
-    VkPipelineDynamicStateCreateInfo dynamicStateInfo;
+    VkPipelineViewportStateCreateInfo viewportInfo{};
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo{};
+    VkPipelineRasterizationStateCreateInfo rasterizationInfo{};
+    VkPipelineMultisampleStateCreateInfo multisampleInfo{};
+    VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+    VkPipelineColorBlendStateCreateInfo colorBlendInfo{};
+    VkPipelineDepthStencilStateCreateInfo depthStencilInfo{};
+    std::vector<VkDynamicState> dynamicStateEnables{};
+    VkPipelineDynamicStateCreateInfo dynamicStateInfo{};
     VkPipelineLayout pipelineLayout = nullptr;
     VkRenderPass renderPass = nullptr;
     uint32_t subpass = 0;
@@ -54,8 +54,8 @@ namespace ox {
 
       GraphicsDevice& m_Device;
       VkPipeline m_GraphicsPipeline;
-      VkShaderModule vertShaderModule;
-      VkShaderModule fragShaderModule;
+      VkShaderModule m_VertShaderModule;
+      VkShaderModule m_FragShaderModule;
 
       static std::vector<char> readFile(const std::string& path);
   };

@@ -6,13 +6,13 @@
 #include <vector>
 
 namespace ox {
-
 #define MAX_LIGHTS 16
 
   struct PointLight {
     glm::vec4 position{}; // ignore w
     glm::vec4 color{}; // w is intensity
   };
+
   struct OX_API GlobalUBO {
     glm::mat4 projection{ 1.0f };
     glm::mat4 view{ 1.0f };

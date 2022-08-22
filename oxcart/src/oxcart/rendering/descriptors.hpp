@@ -13,7 +13,7 @@ namespace ox {
    public:
     class Builder {
      public:
-      Builder(GraphicsDevice &lveDevice) : lveDevice{lveDevice} {}
+      Builder(GraphicsDevice& device) : m_Device{device} {}
 
       Builder &addBinding(
           uint32_t binding,
@@ -23,22 +23,22 @@ namespace ox {
       std::unique_ptr<DescriptorSetLayout> build() const;
 
      private:
-      GraphicsDevice &lveDevice;
-      std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings{};
+      GraphicsDevice &m_Device;
+      std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> m_Bindings{};
     };
 
     DescriptorSetLayout(
-        GraphicsDevice &lveDevice, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings);
+        GraphicsDevice& device, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings);
     ~DescriptorSetLayout();
     DescriptorSetLayout(const DescriptorSetLayout &) = delete;
     DescriptorSetLayout &operator=(const DescriptorSetLayout &) = delete;
 
-    VkDescriptorSetLayout getDescriptorSetLayout() const { return descriptorSetLayout; }
+    VkDescriptorSetLayout getDescriptorSetLayout() const { return m_DescriptorSetLayout; }
 
    private:
-    GraphicsDevice &lveDevice;
-    VkDescriptorSetLayout descriptorSetLayout;
-    std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings;
+    GraphicsDevice &m_Device;
+    VkDescriptorSetLayout m_DescriptorSetLayout;
+    std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> m_Bindings;
 
     friend class DescriptorWriter;
   };
@@ -47,7 +47,7 @@ namespace ox {
    public:
     class Builder {
      public:
-      Builder(GraphicsDevice &lveDevice) : lveDevice{lveDevice} {}
+      Builder(GraphicsDevice& device) : m_Device{device} {}
 
       Builder &addPoolSize(VkDescriptorType descriptorType, uint32_t count);
       Builder &setPoolFlags(VkDescriptorPoolCreateFlags flags);
@@ -55,14 +55,14 @@ namespace ox {
       std::unique_ptr<DescriptorPool> build() const;
 
      private:
-      GraphicsDevice &lveDevice;
-      std::vector<VkDescriptorPoolSize> poolSizes{};
-      uint32_t maxSets = 1000;
-      VkDescriptorPoolCreateFlags poolFlags = 0;
+      GraphicsDevice& m_Device;
+      std::vector<VkDescriptorPoolSize> m_PoolSizes{};
+      uint32_t m_MaxSets = 1000;
+      VkDescriptorPoolCreateFlags m_PoolFlags = 0;
     };
 
     DescriptorPool(
-        GraphicsDevice &lveDevice,
+        GraphicsDevice &device,
         uint32_t maxSets,
         VkDescriptorPoolCreateFlags poolFlags,
         const std::vector<VkDescriptorPoolSize> &poolSizes);
@@ -78,8 +78,8 @@ namespace ox {
     void resetPool();
 
    private:
-    GraphicsDevice &lveDevice;
-    VkDescriptorPool descriptorPool;
+    GraphicsDevice &m_Device;
+    VkDescriptorPool m_DescriptorPool;
 
     friend class DescriptorWriter;
   };
@@ -95,8 +95,8 @@ namespace ox {
     void overwrite(VkDescriptorSet &set);
 
    private:
-    DescriptorSetLayout &setLayout;
-    DescriptorPool &pool;
-    std::vector<VkWriteDescriptorSet> writes;
+    DescriptorSetLayout &m_SetLayout;
+    DescriptorPool &m_Pool;
+    std::vector<VkWriteDescriptorSet> m_Writes;
   };
 }

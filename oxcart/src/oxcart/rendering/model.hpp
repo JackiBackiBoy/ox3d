@@ -7,8 +7,6 @@
 #include "oxcart/rendering/texture.hpp"
 #include "oxcart/rendering/descriptors.hpp"
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <assimp/scene.h>
 #include <vector>
@@ -63,12 +61,12 @@ namespace ox {
       std::vector<uint32_t> m_Indices;
       std::vector<Vertex> m_Vertices;
 
-      std::vector<VkWriteDescriptorSet> writes;
+      std::vector<VkWriteDescriptorSet> m_Writes;
       VkDescriptorPool m_DescriptorPool;
       VkDescriptorPoolSize m_PoolSize;
       std::unique_ptr<DescriptorSetLayout> m_ImageSetLayout;
       GraphicsDevice& m_Device;
-      std::vector<VkDescriptorImageInfo> imageInfos;
+      std::vector<VkDescriptorImageInfo> m_ImageInfos;
 
       std::unique_ptr<Buffer> m_VertexBuffer;
       uint32_t m_VertexCount;

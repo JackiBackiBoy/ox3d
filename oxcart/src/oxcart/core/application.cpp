@@ -3,8 +3,6 @@
 #include "oxcart/components/camera.hpp"
 #include "oxcart/components/transform.hpp"
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 
@@ -14,10 +12,6 @@
 #include <iostream>
 #include "oxcart/input/keyboard.hpp"
 #include "oxcart/input/mouse.hpp"
-
-#include "oxcart/ui/imgui.h"
-#include "oxcart/ui/imgui_impl_glfw.h"
-#include "oxcart/ui/imgui_impl_vulkan.h"
 #include "oxcart/ui/imguiLayer.hpp"
 
 namespace ox {
@@ -32,20 +26,20 @@ namespace ox {
   }
 
   void Application::onStart() {
-    globalDescriptorSets.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
+    m_GlobalDescriptorSets.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
 
     // Fix for NonCoherentAtomSize bug when flushing memory of UBO
-    uboBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
+    m_UboBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
 
     // Global uniform buffer (GlobalUBO object)
-    for (int i = 0; i < uboBuffers.size(); i++) {
-      uboBuffers[i] = std::make_unique<Buffer>(
+    for (int i = 0; i < m_UboBuffers.size(); i++) {
+      m_UboBuffers[i] = std::make_unique<Buffer>(
           m_Device,
           sizeof(GlobalUBO),
           1,
           VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
           VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-      uboBuffers[i]->map();
+      m_UboBuffers[i]->map();
     }
 
     auto globalSetLayout = DescriptorSetLayout::Builder(m_Device)
@@ -57,11 +51,11 @@ namespace ox {
       .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
       .build();
 
-    for (int i = 0; i < globalDescriptorSets.size(); i++) {
-      auto bufferInfo = uboBuffers[i]->descriptorInfo();
+    for (int i = 0; i < m_GlobalDescriptorSets.size(); i++) {
+      auto bufferInfo = m_UboBuffers[i]->descriptorInfo();
       DescriptorWriter(*globalSetLayout, *globalPool)
         .writeBuffer(0, &bufferInfo)
-        .build(globalDescriptorSets[i]);
+        .build(m_GlobalDescriptorSets[i]);
     }
 
     std::vector<VkDescriptorSetLayout> setLayouts = {
@@ -70,12 +64,12 @@ namespace ox {
     };
 
     // Systems
-    renderSystem = std::make_unique<RenderSystem>(
+    m_RenderSystem = std::make_unique<RenderSystem>(
       m_Device,
       m_Renderer.getSwapChainRenderPass(),
       setLayouts);
 
-    pointLightSystem = std::make_unique<PointLightSystem>(
+    m_PointLightSystem = std::make_unique<PointLightSystem>(
       m_Device,
       m_Renderer.getSwapChainRenderPass(),
       setLayouts);
@@ -84,10 +78,10 @@ namespace ox {
   void Application::onUpdate(const float& dt) {
     float aspect = m_Renderer.getAspectRatio();
 
-    if (aspect != lastAspectRatio) {
+    if (aspect != m_LastAspectRatio) {
       // Perspective matrix
       Camera::current->setPerspective(glm::radians(80.0f), aspect, 0.01f, 100.0f);
-      lastAspectRatio = aspect;
+      m_LastAspectRatio = aspect;
     }
   }
 
@@ -96,7 +90,7 @@ namespace ox {
       int frameIndex = m_Renderer.getFrameIndex();
 
       std::vector<VkDescriptorSet> descriptorSets = {
-        globalDescriptorSets[frameIndex],
+        m_GlobalDescriptorSets[frameIndex],
       };
 
       FrameInfo frameInfo {
@@ -114,15 +108,15 @@ namespace ox {
       ubo.view = Camera::current->getView();
       ubo.inverseView = Camera::current->getInverseView();
 
-      pointLightSystem->onUpdate(frameInfo, ubo);
-      uboBuffers[frameIndex]->writeToBuffer(&ubo);
-      uboBuffers[frameIndex]->flush();
+      m_PointLightSystem->onUpdate(frameInfo, ubo);
+      m_UboBuffers[frameIndex]->writeToBuffer(&ubo);
+      m_UboBuffers[frameIndex]->flush();
       
       // Render
       m_Renderer.beginSwapChainRenderPass(commandBuffer);
 
-      renderSystem->renderEntities(frameInfo, m_Entities);
-      pointLightSystem->render(frameInfo);
+      m_RenderSystem->renderEntities(frameInfo, m_Entities);
+      m_PointLightSystem->render(frameInfo);
       ImGuiLayer::render(frameInfo);
 
       m_Renderer.endSwapChainRenderPass(commandBuffer);

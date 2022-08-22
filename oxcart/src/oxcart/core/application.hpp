@@ -42,11 +42,11 @@ namespace ox {
       std::vector<Entity*> m_Entities;
 
     private:
-      glm::vec2 lastMousePos;
-      float lastAspectRatio = 0;
-      std::vector<VkDescriptorSet> globalDescriptorSets;
-      std::vector<std::unique_ptr<Buffer>> uboBuffers;
-      std::unique_ptr<RenderSystem> renderSystem;
-      std::unique_ptr<PointLightSystem> pointLightSystem;
+      glm::vec2 m_LastMousePos;
+      float m_LastAspectRatio = 0;
+      std::vector<VkDescriptorSet> m_GlobalDescriptorSets;
+      std::vector<std::unique_ptr<Buffer>> m_UboBuffers;
+      std::unique_ptr<RenderSystem> m_RenderSystem;
+      std::unique_ptr<PointLightSystem> m_PointLightSystem;
   };
 }

@@ -1,10 +1,10 @@
 #include "oxcart/rendering/systems/renderSystem.hpp"
 #include "oxcart/components/transform.hpp"
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
+
+// std
 #include <stdexcept>
 #include <array>
 #include <iostream>

@@ -1,12 +1,13 @@
 #pragma once
 
+#include "oxcart/core/core.hpp"
 #include "oxcart/rendering/graphicsDevice.hpp"
 #include "oxcart/rendering/renderer.hpp"
 #include "oxcart/rendering/frameInfo.hpp"
 #include <vulkan/vulkan.h>
 
 namespace ox {
-  class ImGuiLayer {
+  class OX_API ImGuiLayer {
     public:
       // Delete copy constructor and assign operator
       ImGuiLayer(const ImGuiLayer&) = delete;

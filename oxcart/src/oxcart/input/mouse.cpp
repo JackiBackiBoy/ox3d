@@ -6,27 +6,27 @@ namespace ox {
   }
 
   glm::vec2 Mouse::getPosition() {
-    return { posX, posY };
+    return { m_PosX, m_PosY };
   }
 
   float Mouse::getVerticalScroll() {
-    float value = scrollY;
-    scrollY = 0.0f;
+    float value = m_ScrollY;
+    m_ScrollY = 0.0f;
     return value;
   }
 
   void Mouse::onMouseMove(GLFWwindow* window, double xpos, double ypos) {
-    posX = float(xpos);
-    posY = float(ypos);
+    m_PosX = float(xpos);
+    m_PosY = float(ypos);
   }
 
   void Mouse::onMouseScroll(GLFWwindow* window, double xoffset, double yoffset) {
-    scrollX = float(xoffset);
-    scrollY = float(yoffset);
+    m_ScrollX = float(xoffset);
+    m_ScrollY = float(yoffset);
   }
 
-  float Mouse::posX = 0.0f;
-  float Mouse::posY = 0.0f;
-  float Mouse::scrollX = 0.0f;
-  float Mouse::scrollY = 0.0f;
+  float Mouse::m_PosX = 0.0f;
+  float Mouse::m_PosY = 0.0f;
+  float Mouse::m_ScrollX = 0.0f;
+  float Mouse::m_ScrollY = 0.0f;
 }
