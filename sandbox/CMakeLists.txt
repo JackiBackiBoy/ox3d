@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 set(MINGW_PATH C:/msys64/mingw64)
+set(CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/CMake)
+
+include(Utilites)
 
 message(STATUS "Using ${CMAKE_GENERATOR}")
 if (CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
@@ -32,6 +35,7 @@ include_directories(
 # Retrieve all source and header files
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_HOME_DIRECTORY}/sandbox/src/*.cpp)
 file(GLOB_RECURSE HEADER_FILES ${CMAKE_HOME_DIRECTORY}/sandbox/src/*.hpp)
+SOURCE_GROUP_BY_FOLDER(SOURCE_FILES)
 
 add_executable(sandbox ${SOURCE_FILES} ${HEADER_FILES})
 

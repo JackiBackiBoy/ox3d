@@ -42,7 +42,6 @@ namespace ox {
       std::vector<Entity*> m_Entities;
 
     private:
-      VkDescriptorPool imguiPool = VK_NULL_HANDLE;
       glm::vec2 lastMousePos;
       float lastAspectRatio = 0;
       std::vector<VkDescriptorSet> globalDescriptorSets;

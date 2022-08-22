@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.20.0)
 
 set(NAME oxcart)
 set(MINGW_PATH C:/msys64/mingw64)
+set(CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/CMake)
+
+include(Utilities)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 message(STATUS "Using ${CMAKE_GENERATOR}")
 if (CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
@@ -27,8 +31,6 @@ include_directories(
   ${CMAKE_HOME_DIRECTORY}/oxcart/src/oxcart/ui
   ${CMAKE_HOME_DIRECTORY}/oxcart/src/oxcart/ui/backends
 )
-
-
 
 if (WIN32)
   set(GLFW_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/GLFW/windows)
@@ -105,6 +107,7 @@ endif()
 # Retrieve all source and header files
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_HOME_DIRECTORY}/${NAME}/*.cpp)
 file(GLOB_RECURSE HEADER_FILES ${CMAKE_HOME_DIRECTORY}/${NAME}/*.hpp)
+SOURCE_GROUP_BY_FOLDER(SOURCE_FILES)
 
 # Export dynamically linked library for the Oxcart engine
 add_library(${NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES})

@@ -77,9 +77,10 @@ namespace ox {
     ImGui::NewFrame();
 
     // Object editor pane
-    ImGui::Begin("Object Editor");
-    static float rotation = 0.0f;
-    ImGui::SliderFloat("Rotation", &rotation, 0, 360);
+    if (ImGui::Begin("Object Editor")) {
+      static float rotation = 0.0f;
+      ImGui::SliderFloat("Rotation", &rotation, 0, 360);
+    }
     ImGui::End();
 
     ImGui::Render();
@@ -87,6 +88,14 @@ namespace ox {
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), frameInfo.commandBuffer);
     ImGui::UpdatePlatformWindows();
     ImGui::RenderPlatformWindowsDefault();
+  }
+
+  bool ImGuiLayer::isUsingMouse() {
+    return ImGui::GetIO().WantCaptureMouse;
+  }
+
+  bool ImGuiLayer::isUsingKeyboard() {
+    return ImGui::GetIO().WantCaptureKeyboard;
   }
 
   VkDescriptorPool ImGuiLayer::m_Pool;

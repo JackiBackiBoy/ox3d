@@ -16,6 +16,8 @@ namespace ox {
       
       static void initialize(GraphicsDevice& device, Renderer& renderer);
       static void render(FrameInfo& frameInfo);
+      static bool isUsingMouse();
+      static bool isUsingKeyboard();
 
     private:
       static VkDescriptorPool m_Pool;
