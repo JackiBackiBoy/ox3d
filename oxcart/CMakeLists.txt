@@ -35,13 +35,30 @@ include_directories(
 if (WIN32)
   set(GLFW_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/GLFW/windows)
   set(VULKAN_SDK_PATH C:/VulkanSDK/1.3.204.0)
-  set(GLM_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/GLM)
   set(ASSIMP_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/assimp/windows)
 elseif(APPLE)
 endif()
 
 set(STB_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/stb)
 set(IMGUI_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/imgui)
+
+# GLM
+# step 0
+find_path(GLM_INCLUDE_DIR "${CMAKE_HOME_DIRECTORY}/vendor/glm")
+
+if((NOT GLM_INCLUDE_DIR) OR (NOT EXISTS ${GLM_INCLUDE_DIR}))
+  # we couldn't find the header files for FOO or they don't exist
+  message("Unable to find GLM. Installing it now.")
+
+  # we have a submodule setup for foo, assume it is under external/foo
+  # now we need to clone this submodule
+  execute_process(COMMAND git submodule update --init -- ${CMAKE_HOME_DIRECTORY}/vendor/glm
+                    WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY})
+  
+  set(GLM_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/glm)
+else()
+  set(GLM_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/glm)
+endif()
 
 # 1. Find Vulkan
 if (DEFINED VULKAN_SDK_PATH)
@@ -130,7 +147,7 @@ if (WIN32)
     ${GLFW_INCLUDE_DIRS}
     ${Vulkan_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIR}
-    ${GLM_PATH}/include
+    ${GLM_INCLUDE_DIR}
     ${STB_PATH}
     ${IMGUI_PATH}
   )
