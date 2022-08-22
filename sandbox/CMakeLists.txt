@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20.0)
 set(MINGW_PATH C:/msys64/mingw64)
 set(CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/CMake)
 
-include(Utilites)
+include(Utilities)
 
 message(STATUS "Using ${CMAKE_GENERATOR}")
 if (CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
