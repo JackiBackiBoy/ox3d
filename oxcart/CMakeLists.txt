@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 set(NAME oxcart)
-set(MINGW_PATH C:/msys64/mingw64)
 set(CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/CMake)
 
 include(Utilities)
@@ -56,16 +55,16 @@ else()
 endif()
 
 # 2. Asset Importer Library
-find_path(ASSIMP_INCLUDE_DIR vendor/assimp ${CMAKE_HOME_DIRECTORY})
-
 if((NOT ASSIMP_INCLUDE_DIR) OR (NOT EXISTS ${ASSIMP_INCLUDE_DIR}))
   message(STATUS "Unable to find Assimp. Installing it now.")
   execute_process(COMMAND git submodule update --init -- ${CMAKE_HOME_DIRECTORY}/vendor/assimp
                     WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY})
   
   set(ASSIMP_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/assimp)
+  set(ASSIMP_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/assimp/bin)
 else()
   set(ASSIMP_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/assimp)
+  set(ASSIMP_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/assimp/bin)
 endif()
 
 # 1. Find Vulkan
@@ -158,7 +157,7 @@ elseif (APPLE)
   target_link_directories(${NAME} PUBLIC
   )
 
-  target_link_libraries(${NAME} glfw ${Vulkan_LIBRARIES} ${ASSIMP_LIBRARIES})
+  target_link_libraries(${NAME} glfw ${Vulkan_LIBRARIES} assimp)
 endif()
 
 # ------ Compiling shader files to SPIRV format ------

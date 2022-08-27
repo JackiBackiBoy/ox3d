@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.20.0)
 
-set(MINGW_PATH C:/msys64/mingw64)
 set(CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/CMake)
 
 include(Utilities)
