@@ -6,17 +6,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/CMake)
 include(Utilities)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-message(STATUS "Using ${CMAKE_GENERATOR}")
-if (CMAKE_GENERATOR STREQUAL "MinGW Makefiles")
-  if (NOT MINGW_PATH)
-    message(FATAL_ERROR "MINGW_PATH not set!")
-  endif()
-  
-  set(USE_MINGW "True")
-  set(CMAKE_C_COMPILER ${MINGW_PATH}/bin/gcc.exe)
-  set(CMAKE_CXX_COMPILER ${MINGW_PATH}/bin/g++.exe)
-endif()
-
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -60,11 +49,11 @@ if((NOT ASSIMP_INCLUDE_DIR) OR (NOT EXISTS ${ASSIMP_INCLUDE_DIR}))
   execute_process(COMMAND git submodule update --init -- ${CMAKE_HOME_DIRECTORY}/vendor/assimp
                     WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY})
   
-  set(ASSIMP_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/assimp)
-  set(ASSIMP_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/assimp/bin)
+  set(ASSIMP_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/assimp/include)
+  set(ASSIMP_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/assimp/lib)
 else()
-  set(ASSIMP_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/assimp)
-  set(ASSIMP_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/assimp/bin)
+  set(ASSIMP_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/assimp/include)
+  set(ASSIMP_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/assimp/lib)
 endif()
 
 # 1. Find Vulkan
