@@ -76,12 +76,57 @@ namespace ox {
   }
 
   void Application::onUpdate(const float& dt) {
+    static glm::vec2 lastMousePos = { 0.0f, 0.0f };
+    static int lastMouseButton = -1; // no mouse button
+
     float aspect = m_Renderer.getAspectRatio();
 
     if (aspect != m_LastAspectRatio) {
       // Perspective matrix
       Camera::current->setPerspective(glm::radians(80.0f), aspect, 0.01f, 100.0f);
       m_LastAspectRatio = aspect;
+    }
+
+    // Camera movement (developer mode)
+    glm::vec2 currentMousePos = Mouse::getPosition();
+    glm::vec2 deltaMousePos = currentMousePos - lastMousePos;
+
+    // Right mouse button (rotate camera)
+    if (Mouse::isButtonDown(1, m_Window.getRawWindow())) {
+      if (lastMouseButton != 1) {
+        deltaMousePos = { 0.0f, 0.0f };
+      }
+
+      int width = m_Window.getExtent().width;
+      int height = m_Window.getExtent().height;
+
+      // Horizontal and vertical mouse bounding
+      if (currentMousePos.x < 0.0f || currentMousePos.x > width ||
+          currentMousePos.y < 0.0f || currentMousePos.y > height) {
+
+        glm::vec2 newMousePos = {
+          currentMousePos.x < 0.0f ? width : (currentMousePos.x > width ? 0.0f : currentMousePos.x),
+          currentMousePos.y < 0.0f ? height : (currentMousePos.y > height ? 0.0f : currentMousePos.y),
+        };
+
+        Mouse::setPosition(newMousePos, m_Window.getRawWindow());
+        currentMousePos = newMousePos;
+        deltaMousePos = { 0.0f, 0.0f };
+      }
+
+      Camera::current->setYaw(Camera::current->getYaw() - dt * 0.1f * deltaMousePos.x);
+      Camera::current->setPitch(Camera::current->getPitch() - dt * 0.1f * deltaMousePos.y);
+
+      lastMousePos = currentMousePos;
+      lastMouseButton = 1;
+    }
+    else {
+      lastMouseButton = -1;
+    }
+
+    // Middle mouse button (move laterally)
+    if (Mouse::isButtonDown(2, m_Window.getRawWindow())) {
+      std::cout << "BUTTON DOWN" << std::endl;
     }
   }
 

@@ -16,6 +16,7 @@ namespace ox {
 
       static bool isButtonDown(const int& button, GLFWwindow* window);
       static glm::vec2 getPosition();
+      static void setPosition(const glm::vec2& pos, GLFWwindow* window);
       static float getVerticalScroll();
 
       // Callbacks

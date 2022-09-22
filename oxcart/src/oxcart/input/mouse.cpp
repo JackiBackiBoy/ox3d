@@ -9,6 +9,10 @@ namespace ox {
     return { m_PosX, m_PosY };
   }
 
+  void Mouse::setPosition(const glm::vec2& pos, GLFWwindow* window) {
+    glfwSetCursorPos(window, pos.x, pos.y);
+  }
+
   float Mouse::getVerticalScroll() {
     float value = m_ScrollY;
     m_ScrollY = 0.0f;
