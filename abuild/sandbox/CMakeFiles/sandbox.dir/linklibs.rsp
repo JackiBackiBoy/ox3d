@@ -1,1 +1,0 @@
-  -LC:/Code/C++/ox3d/build/vendor/glfw/src  -LC:/VulkanSDK/1.3.204.0/Lib  -LC:/Code/C++/ox3d/build/vendor/assimp/lib  ../bin/oxcart.dll.a -lglfw3 -lvulkan-1 ../vendor/assimp/lib/libassimp.dll.a ../vendor/assimp/contrib/zlib/libzlibstatic.a -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
