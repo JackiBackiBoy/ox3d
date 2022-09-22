@@ -1,0 +1,137 @@
+[
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\components\\camera.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\components\\camera.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/components/camera.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\components\\light.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\components\\light.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/components/light.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\core\\application.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\core\\application.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/core/application.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\core\\window.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\core\\window.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/core/window.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\data\\entity.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\data\\entity.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/data/entity.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\input\\keyboard.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\input\\keyboard.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/input/keyboard.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\input\\mouse.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\input\\mouse.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/input/mouse.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\rendering\\buffer.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\rendering\\buffer.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/rendering/buffer.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\rendering\\descriptors.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\rendering\\descriptors.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/rendering/descriptors.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\rendering\\graphicsDevice.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\rendering\\graphicsDevice.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/rendering/graphicsDevice.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\rendering\\graphicsPipeline.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\rendering\\graphicsPipeline.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/rendering/graphicsPipeline.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\rendering\\mesh.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\rendering\\mesh.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/rendering/mesh.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\rendering\\model.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\rendering\\model.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/rendering/model.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\rendering\\renderer.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\rendering\\renderer.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/rendering/renderer.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\rendering\\swapChain.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\rendering\\swapChain.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/rendering/swapChain.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\rendering\\systems\\pointLightSystem.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\rendering\\systems\\pointLightSystem.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/rendering/systems/pointLightSystem.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\rendering\\systems\\renderSystem.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\rendering\\systems\\renderSystem.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/rendering/systems/renderSystem.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\rendering\\texture.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\rendering\\texture.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/rendering/texture.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\ui\\imgui.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\ui\\imgui.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/ui/imgui.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\ui\\imguiLayer.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\ui\\imguiLayer.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/ui/imguiLayer.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\ui\\imgui_demo.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\ui\\imgui_demo.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/ui/imgui_demo.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\ui\\imgui_draw.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\ui\\imgui_draw.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/ui/imgui_draw.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\ui\\imgui_impl_glfw.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\ui\\imgui_impl_glfw.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/ui/imgui_impl_glfw.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\ui\\imgui_impl_vulkan.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\ui\\imgui_impl_vulkan.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/ui/imgui_impl_vulkan.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\ui\\imgui_tables.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\ui\\imgui_tables.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/ui/imgui_tables.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/oxcart",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe -DENGINE_DIR=\\\"C:/Code/C++/ox3d/\\\" -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DOX_BUILD_LIB -Doxcart_EXPORTS @CMakeFiles/oxcart.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\oxcart.dir\\src\\oxcart\\ui\\imgui_widgets.cpp.obj -c C:\\Code\\C++\\ox3d\\oxcart\\src\\oxcart\\ui\\imgui_widgets.cpp",
+  "file": "C:/Code/C++/ox3d/oxcart/src/oxcart/ui/imgui_widgets.cpp"
+},
+{
+  "directory": "C:/Code/C++/ox3d/build/sandbox",
+  "command": "C:\\Users\\TheGa\\mingw64\\bin\\g++.exe  @CMakeFiles/sandbox.dir/includes_CXX.rsp -std=gnu++17 -o CMakeFiles\\sandbox.dir\\src\\sandbox.cpp.obj -c C:\\Code\\C++\\ox3d\\sandbox\\src\\sandbox.cpp",
+  "file": "C:/Code/C++/ox3d/sandbox/src/sandbox.cpp"
+}
+]

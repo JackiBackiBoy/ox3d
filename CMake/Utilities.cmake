@@ -1,4 +1,3 @@
-
 # Visual Studio automatic project structure
 # =========================================
 MACRO(SOURCE_GROUP_BY_FOLDER target)

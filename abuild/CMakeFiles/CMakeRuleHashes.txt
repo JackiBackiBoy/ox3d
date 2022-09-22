@@ -1,0 +1,8 @@
+# Hashes of file build rules.
+39ed6a1bf47ef6944a22fd3d2603758b C:/Code/C++/ox3d/assets/shaders/lightingShader.frag.spv
+fa8a7e96b7582e52c18f02800acd19c4 C:/Code/C++/ox3d/assets/shaders/lightingShader.vert.spv
+0c4984391cbf7b12801fcb43867d7b69 C:/Code/C++/ox3d/assets/shaders/pointLight.frag.spv
+a811d5a1e7e0b2c91498cf0bade49c02 C:/Code/C++/ox3d/assets/shaders/pointLight.vert.spv
+5e0b04dfb928e8863a349da26c6d2716 oxcart/CMakeFiles/Shaders
+1a7d1648a89e0161ef9ede5f44a39363 vendor/glfw/CMakeFiles/uninstall
+c8f39addf142b365204f4e70f7f1900d vendor/glfw/src/CMakeFiles/update_mappings

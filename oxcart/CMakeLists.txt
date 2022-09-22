@@ -21,9 +21,7 @@ include_directories(
 )
 
 if (WIN32)
-  set(GLFW_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/GLFW/windows)
   set(VULKAN_SDK_PATH C:/VulkanSDK/1.3.204.0)
-  #set(ASSIMP_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/assimp/windows)
 elseif(APPLE)
 endif()
 
@@ -56,6 +54,19 @@ else()
   set(ASSIMP_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/assimp/lib)
 endif()
 
+# 3. GLFW
+if((NOT GLFW_INCLUDE_DIR) OR (NOT EXISTS ${GLFW_INCLUDE_DIR}))
+  message(STATUS "Unable to find GLFW. Installing it now.")
+  execute_process(COMMAND git submodule update --init -- ${CMAKE_HOME_DIRECTORY}/vendor/glfw
+                    WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY})
+  
+  set(GLFW_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/glfw/include)
+  set(GLFW_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/glfw/src)
+else()
+  set(GLFW_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/glfw/include)
+  set(GLFW_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/glfw/src)
+endif()
+
 # 1. Find Vulkan
 if (DEFINED VULKAN_SDK_PATH)
   set(Vulkan_INCLUDE_DIRS "${VULKAN_SDK_PATH}/Include") # 1.1 Make sure this include path is correct
@@ -69,30 +80,6 @@ if (NOT Vulkan_FOUND)
   message(FATAL_ERROR "Could not find Vulkan library!")
 else()
   message(STATUS "Using vulkan lib at: ${Vulkan_LIBRARIES}")
-endif()
-
-# 2. Find GLFW
-if (DEFINED GLFW_PATH)
-  message(STATUS "Using GLFW path at: " ${GLFW_PATH})
-  set(GLFW_INCLUDE_DIRS "${GLFW_PATH}/include")
-
-  # Check the desired library
-  if (MSVC)
-    message(STATUS "Using Visual Studio generator")
-    set(GLFW_LIB "${GLFW_PATH}/lib-vc2022")
-  else()
-    message(STATUS "Using MinGW generator")
-    set(GLFW_LIB "${GLFW_PATH}/lib-mingw-w64")
-  endif()
-else()
-  find_package(glfw3 3.3 REQUIRED)
-  set(GLFW_LIB glfw)
-  message(STATUS "Found GLFW")
-endif()
-if (NOT GLFW_LIB)
-  message(FATAL_ERROR "Could not find glfw library!")
-else()
-  message(STATUS "Using GLFW lib at: ${GLFW_LIB}")
 endif()
 
 # Retrieve all source and header files
@@ -118,7 +105,7 @@ target_compile_definitions(${NAME} PRIVATE
 
 if (WIN32)
   target_include_directories(${NAME} PUBLIC
-    ${GLFW_INCLUDE_DIRS}
+    ${GLFW_INCLUDE_DIR}
     ${Vulkan_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIR}
     ${GLM_INCLUDE_DIR}
@@ -127,12 +114,12 @@ if (WIN32)
   )
 
   target_link_directories(${NAME} PUBLIC
-    ${GLFW_LIB}
+    ${GLFW_LIBRARIES}
     ${Vulkan_LIBRARIES}
     ${ASSIMP_LIBRARIES}
   )
 
-  target_link_libraries(${NAME} glfw3 vulkan-1 assimp)
+  target_link_libraries(${NAME} glfw vulkan-1 assimp)
 elseif (APPLE)
   message(STATUS "Creating build for macOS!")
   message(STATUS "Vulkan include dir: " ${Vulkan_INCLUDE_DIRS})

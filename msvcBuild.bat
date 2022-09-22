@@ -1,4 +1,4 @@
-if not exist vs-build mkdir vs-build
-cd vs-build
+if not exist build mkdir build
+cd build
 cmake -S ../ -B .
 cd ../
