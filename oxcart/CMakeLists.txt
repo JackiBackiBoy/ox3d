@@ -28,12 +28,12 @@ endif()
 set(STB_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/stb)
 set(IMGUI_PATH ${CMAKE_HOME_DIRECTORY}/dependencies/imgui)
 
-# 1. GLM
+# 2. GLM
 find_path(GLM_INCLUDE_DIR vendor/glm ${CMAKE_HOME_DIRECTORY})
 
 if((NOT GLM_INCLUDE_DIR) OR (NOT EXISTS ${GLM_INCLUDE_DIR}))
   message(STATUS "Unable to find GLM. Installing it now.")
-  execute_process(COMMAND git submodule update --init -- ${CMAKE_HOME_DIRECTORY}/vendor/glm
+  execute_process(COMMAND git submodule update --init -- vendor/glm
                     WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY})
   
   set(GLM_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/glm)
@@ -41,31 +41,6 @@ else()
   set(GLM_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/glm)
 endif()
 
-# 2. Asset Importer Library
-if((NOT ASSIMP_INCLUDE_DIR) OR (NOT EXISTS ${ASSIMP_INCLUDE_DIR}))
-  message(STATUS "Unable to find Assimp. Installing it now.")
-  execute_process(COMMAND git submodule update --init -- ${CMAKE_HOME_DIRECTORY}/vendor/assimp
-                    WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY})
-  
-  set(ASSIMP_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/assimp/include)
-  set(ASSIMP_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/assimp/lib)
-else()
-  set(ASSIMP_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/assimp/include)
-  set(ASSIMP_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/assimp/lib)
-endif()
-
-# 3. GLFW
-if((NOT GLFW_INCLUDE_DIR) OR (NOT EXISTS ${GLFW_INCLUDE_DIR}))
-  message(STATUS "Unable to find GLFW. Installing it now.")
-  execute_process(COMMAND git submodule update --init -- ${CMAKE_HOME_DIRECTORY}/vendor/glfw
-                    WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY})
-  
-  set(GLFW_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/glfw/include)
-  set(GLFW_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/glfw/src)
-else()
-  set(GLFW_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/vendor/glfw/include)
-  set(GLFW_LIBRARIES ${CMAKE_HOME_DIRECTORY}/build/vendor/glfw/src)
-endif()
 
 # 1. Find Vulkan
 if (DEFINED VULKAN_SDK_PATH)
@@ -125,12 +100,16 @@ elseif (APPLE)
   message(STATUS "Vulkan include dir: " ${Vulkan_INCLUDE_DIRS})
   message(STATUS "Vulkan library dir: " ${Vulkan_LIBRARIES})
   target_include_directories(${NAME} PUBLIC
+    ${GLFW_INCLUDE_DIR}
+    ${GLM_INCLUDE_DIR}
     ${Vulkan_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIR}
     ${STB_PATH}
   )
 
   target_link_directories(${NAME} PUBLIC
+    ${GLFW_LIBRARIES}
+    ${ASSIMP_LIBRARIES}
   )
 
   target_link_libraries(${NAME} glfw ${Vulkan_LIBRARIES} assimp)

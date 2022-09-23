@@ -97,16 +97,16 @@ namespace ox {
         deltaMousePos = { 0.0f, 0.0f };
       }
 
-      int width = m_Window.getExtent().width;
-      int height = m_Window.getExtent().height;
+      int width, height;
+      glfwGetWindowSize(m_Window.getRawWindow(), &width, &height);
 
       // Horizontal and vertical mouse bounding
-      if (currentMousePos.x < 0.0f || currentMousePos.x > width ||
-          currentMousePos.y < 0.0f || currentMousePos.y > height) {
+      if (currentMousePos.x < 1.0f || currentMousePos.x > width - 1 ||
+          currentMousePos.y < 1.0f || currentMousePos.y > height - 1) {
 
         glm::vec2 newMousePos = {
-          currentMousePos.x < 0.0f ? width : (currentMousePos.x > width ? 0.0f : currentMousePos.x),
-          currentMousePos.y < 0.0f ? height : (currentMousePos.y > height ? 0.0f : currentMousePos.y),
+          currentMousePos.x < 1.0f ? width - 1 : (currentMousePos.x > width - 1 ? 1.0f : currentMousePos.x),
+          currentMousePos.y < 1.0f ? height - 1 : (currentMousePos.y > height - 1 ? 1.0f : currentMousePos.y),
         };
 
         Mouse::setPosition(newMousePos, m_Window.getRawWindow());
@@ -114,8 +114,8 @@ namespace ox {
         deltaMousePos = { 0.0f, 0.0f };
       }
 
-      Camera::current->setYaw(Camera::current->getYaw() - dt * 0.1f * deltaMousePos.x);
-      Camera::current->setPitch(Camera::current->getPitch() - dt * 0.1f * deltaMousePos.y);
+      Camera::current->setYaw(Camera::current->getYaw() - dt * 0.9f * deltaMousePos.x);
+      Camera::current->setPitch(Camera::current->getPitch() - dt * 0.9f * deltaMousePos.y);
 
       lastMousePos = currentMousePos;
       lastMouseButton = 1;
